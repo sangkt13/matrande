@@ -33,27 +33,13 @@
         }
 
         /* --- Scrollbar --- */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #CBD5E1;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94A3B8;
-        }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
 
         /* --- Navigation --- */
-        .nav-item {
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border-bottom: 2px solid transparent;
-        }
+        .nav-item { cursor: pointer; transition: all 0.2s ease; border-bottom: 2px solid transparent; }
         .nav-item:hover { color: var(--primary); background-color: #EFF6FF; }
         .nav-item.active {
             color: var(--primary);
@@ -77,13 +63,9 @@
             border-left-color: #2563EB;
             font-weight: 600;
         }
-        
-        .sidebar-actions {
-            display: none;
-        }
-        .sidebar-item:hover .sidebar-actions {
-            display: flex;
-        }
+
+        .sidebar-actions { display: none; }
+        .sidebar-item:hover .sidebar-actions { display: flex; }
 
         /* --- Matrix Table --- */
         .matrix-container {
@@ -97,11 +79,7 @@
             height: 100%;
         }
 
-        .matrix-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-        }
+        .matrix-table { width: 100%; border-collapse: separate; border-spacing: 0; }
 
         .matrix-table th {
             background-color: #F8FAFC;
@@ -122,7 +100,7 @@
             z-index: 20;
             background-color: #F1F5F9;
             text-align: left;
-            min-width: 400px; /* Increased for long Clinical Problem names */
+            min-width: 400px;
         }
 
         .matrix-table td {
@@ -132,7 +110,7 @@
             height: 44px;
             position: relative;
         }
-        
+
         .matrix-table td.row-header {
             padding: 0 10px;
             position: sticky;
@@ -146,14 +124,9 @@
             box-shadow: 2px 0 5px -2px rgba(0,0,0,0.05);
         }
 
-        .row-action-btn {
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
-        .matrix-table tr:hover .row-action-btn {
-            opacity: 1;
-        }
-        
+        .row-action-btn { opacity: 0; transition: opacity 0.2s; }
+        .matrix-table tr:hover .row-action-btn { opacity: 1; }
+
         .matrix-table tr.footer-row td {
             background-color: #F1F5F9;
             position: sticky;
@@ -188,13 +161,8 @@
             filter: brightness(0.95);
             box-shadow: inset 0 0 0 2px #94A3B8;
         }
-        .matrix-cell.empty {
-            background: transparent;
-            color: transparent;
-        }
-        .matrix-cell.empty:hover {
-            background: #F1F5F9;
-        }
+        .matrix-cell.empty { background: transparent; color: transparent; }
+        .matrix-cell.empty:hover { background: #F1F5F9; }
 
         /* Bloom Colors */
         .bloom-1 { background-color: var(--bloom-1); color: #991B1B; }
@@ -219,23 +187,10 @@
             display: none;
             width: 220px;
         }
-        .bloom-selector {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 4px;
-            margin-top: 8px;
-        }
-        .bloom-opt {
-            height: 30px;
-            border-radius: 4px;
-            cursor: pointer;
-            border: 2px solid transparent;
-        }
-        .bloom-opt.selected {
-            border-color: #2563EB;
-            transform: scale(0.95);
-        }
-        
+        .bloom-selector { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin-top: 8px; }
+        .bloom-opt { height: 30px; border-radius: 4px; cursor: pointer; border: 2px solid transparent; }
+        .bloom-opt.selected { border-color: #2563EB; transform: scale(0.95); }
+
         .stat-card {
             background: white;
             border: 1px solid #E2E8F0;
@@ -254,10 +209,7 @@
             transition: all 0.2s;
         }
         .tab-btn:hover { color: #2563EB; }
-        .tab-btn.active {
-            color: #2563EB;
-            border-bottom-color: #2563EB;
-        }
+        .tab-btn.active { color: #2563EB; border-bottom-color: #2563EB; }
         .config-input {
             width: 60px;
             text-align: center;
@@ -266,11 +218,8 @@
             padding: 4px;
             transition: all 0.2s;
         }
-        .config-input:focus {
-            border-color: #2563EB;
-            outline: none;
-        }
-        
+        .config-input:focus { border-color: #2563EB; outline: none; }
+
         /* New Inputs */
         .clo-desc-input {
             width: 100%;
@@ -284,12 +233,9 @@
         .clo-desc-input:focus { border-color: #2563EB; }
 
         /* Live Monitor Bars */
-        .monitor-bar-bg {
-            width: 100%; height: 6px; background: #F1F5F9; border-radius: 3px; overflow: hidden; margin-top: 4px;
-        }
-        .monitor-bar-fill {
-            height: 100%; transition: width 0.5s ease; border-radius: 3px;
-        }
+        .monitor-bar-bg { width: 100%; height: 6px; background: #F1F5F9; border-radius: 3px; overflow: hidden; margin-top: 4px; }
+        .monitor-bar-fill { height: 100%; transition: width 0.5s ease; border-radius: 3px; }
+
         .text-problem {
             white-space: normal;
             font-size: 12px;
@@ -302,11 +248,9 @@
             border-color: #94A3B8;
             background: #F8FAFC;
         }
-        
+
         /* Export Menu */
-        .export-group {
-            position: relative;
-        }
+        .export-group { position: relative; }
         .export-dropdown {
             position: absolute;
             right: 0;
@@ -320,9 +264,7 @@
             min-width: 200px;
             z-index: 50;
         }
-        .export-group:hover .export-dropdown {
-            display: block;
-        }
+        .export-group:hover .export-dropdown { display: block; }
         .export-item {
             display: block;
             padding: 8px 12px;
@@ -331,6 +273,18 @@
             cursor: pointer;
         }
         .export-item:hover { background-color: #F1F5F9; color: #0F172A; }
+
+        /* Cloud status */
+        .cloud-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border: 1px solid #E2E8F0;
+            border-radius: 999px;
+            font-size: 12px;
+            background: #fff;
+        }
     </style>
 </head>
 <body class="flex flex-col">
@@ -355,6 +309,13 @@
                 <div class="flex items-center" title="5. Đánh giá"><span class="legend-dot bloom-5"></span>L5</div>
                 <div class="flex items-center" title="6. Sáng tạo"><span class="legend-dot bloom-6"></span>L6</div>
             </div>
+
+            <!-- Cloud indicator -->
+            <div class="cloud-pill hidden lg:inline-flex" title="Lưu/Tải state trên Vercel Blob">
+                <i class="fa-solid fa-cloud text-slate-500"></i>
+                <span class="text-slate-600 font-semibold">Cloud:</span>
+                <span id="cloudStatus" class="text-slate-500">chưa tải</span>
+            </div>
         </div>
 
         <div class="flex items-center gap-3">
@@ -362,7 +323,15 @@
                 <div class="text-[10px] text-slate-500 font-bold uppercase">Tổng câu</div>
                 <div class="text-lg font-bold text-slate-800" id="totalQuestionsDisplay">0</div>
             </div>
-            
+
+            <!-- CLOUD BUTTONS -->
+            <button onclick="saveToCloud()" class="bg-slate-800 hover:bg-slate-900 text-white px-3 py-1.5 rounded text-sm font-medium flex items-center gap-2 transition-colors">
+                <i class="fa-solid fa-cloud-arrow-up"></i> Lưu cloud
+            </button>
+            <button onclick="loadFromCloud()" class="bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 px-3 py-1.5 rounded text-sm font-medium flex items-center gap-2 transition-colors">
+                <i class="fa-solid fa-cloud-arrow-down"></i> Tải cloud
+            </button>
+
             <div class="export-group">
                 <button class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded text-sm font-medium flex items-center gap-2 transition-colors">
                     <i class="fa-solid fa-file-excel"></i> Xuất Excel <i class="fa-solid fa-chevron-down text-[10px]"></i>
@@ -381,16 +350,14 @@
 
     <!-- MAIN -->
     <div class="flex flex-1 overflow-hidden relative">
-        
+
         <!-- SIDEBAR -->
         <aside class="w-72 bg-white border-r border-slate-200 flex flex-col z-20">
             <div class="p-3 border-b border-slate-100 bg-slate-50 font-bold text-xs text-slate-500 uppercase flex justify-between">
                 <span>Hệ thống cơ quan</span>
                 <i class="fa-solid fa-list"></i>
             </div>
-            <div class="flex-1 overflow-y-auto p-2 space-y-1" id="sidebarList">
-                <!-- JS Generated -->
-            </div>
+            <div class="flex-1 overflow-y-auto p-2 space-y-1" id="sidebarList"></div>
             <div class="p-3 border-t border-slate-200 flex flex-col gap-2">
                  <button onclick="addSystem()" class="w-full py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 rounded text-xs font-bold transition-colors">
                     <i class="fa-solid fa-folder-plus mr-1"></i> Thêm Hệ Thống
@@ -423,7 +390,7 @@
 
             <!-- CONTENT VIEWS -->
             <div class="flex-1 overflow-hidden relative">
-                
+
                 <!-- VIEW 1: MATRIX -->
                 <div id="view-matrix" class="h-full flex flex-col p-4 view-section">
                      <div class="mb-2 flex items-center">
@@ -433,12 +400,8 @@
                      <div class="matrix-container flex-1">
                         <div class="overflow-auto h-full relative">
                             <table class="matrix-table" id="mainMatrix">
-                                <thead id="matrixHead">
-                                    <!-- Header Generated -->
-                                </thead>
-                                <tbody id="matrixBody">
-                                    <!-- Body Generated -->
-                                </tbody>
+                                <thead id="matrixHead"></thead>
+                                <tbody id="matrixBody"></tbody>
                             </table>
                         </div>
                     </div>
@@ -462,9 +425,7 @@
                                         <th class="px-4 py-3">Mô tả chi tiết / Định nghĩa</th>
                                     </tr>
                                 </thead>
-                                <tbody id="cloInfoBody">
-                                    <!-- JS Generated -->
-                                </tbody>
+                                <tbody id="cloInfoBody"></tbody>
                             </table>
                         </div>
                     </div>
@@ -473,7 +434,7 @@
                 <!-- VIEW 3: CONFIG & AUTO GEN -->
                 <div id="view-config" class="h-full p-6 overflow-y-auto hidden view-section">
                     <div class="max-w-7xl mx-auto">
-                        
+
                         <!-- Generator Panel -->
                         <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 rounded-lg p-5 mb-6 flex items-center justify-between shadow-sm">
                             <div>
@@ -492,8 +453,8 @@
                         </div>
 
                         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                            
-                            <!-- COL 1: System & Problem Weights (6 cols) -->
+
+                            <!-- COL 1 -->
                             <div class="lg:col-span-6 space-y-6">
                                 <div class="bg-white rounded-lg border border-slate-200 shadow-sm p-5">
                                     <h3 class="font-bold text-slate-800 text-base mb-4 flex items-center justify-between">
@@ -505,13 +466,10 @@
                                         </div>
                                         <span class="text-xs font-normal text-slate-400">(Nhập tỉ trọng % hệ thống)</span>
                                     </h3>
-                                    
-                                    <!-- System Selector in Config -->
+
                                     <div class="mb-4">
                                         <label class="text-xs font-bold text-slate-500 uppercase mb-1 block">Chọn hệ thống để cấu hình:</label>
-                                        <select id="configSystemSelect" onchange="changeConfigSystem(this.value)" class="w-full p-2 border border-slate-300 rounded text-sm font-semibold text-slate-700">
-                                            <!-- Options JS -->
-                                        </select>
+                                        <select id="configSystemSelect" onchange="changeConfigSystem(this.value)" class="w-full p-2 border border-slate-300 rounded text-sm font-semibold text-slate-700"></select>
                                     </div>
 
                                     <div class="p-3 bg-slate-50 border border-slate-200 rounded mb-4">
@@ -533,15 +491,13 @@
                                         </div>
                                     </div>
 
-                                    <div class="space-y-4 max-h-[400px] overflow-y-auto pr-2" id="problemWeightList">
-                                        <!-- JS Generated -->
-                                    </div>
+                                    <div class="space-y-4 max-h-[400px] overflow-y-auto pr-2" id="problemWeightList"></div>
                                 </div>
                             </div>
 
-                            <!-- COL 2: Targets (6 cols) -->
+                            <!-- COL 2 -->
                             <div class="lg:col-span-6 space-y-6">
-                                <!-- Bloom Config -->
+
                                 <div class="bg-white rounded-lg border border-slate-200 shadow-sm p-5">
                                     <h3 class="font-bold text-slate-800 text-base mb-4 flex items-center">
                                         <span class="w-7 h-7 rounded bg-purple-100 text-purple-600 flex items-center justify-center mr-2">
@@ -549,16 +505,13 @@
                                         </span>
                                         Mục tiêu Bloom (Toàn bài)
                                     </h3>
-                                    <div class="grid grid-cols-2 gap-4" id="bloomConfigList">
-                                        <!-- JS Generated -->
-                                    </div>
+                                    <div class="grid grid-cols-2 gap-4" id="bloomConfigList"></div>
                                     <div class="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center">
                                         <span class="font-bold text-slate-600 text-xs uppercase">Tổng Bloom Target:</span>
                                         <span class="font-bold text-base" id="bloomTotalSum">0%</span>
                                     </div>
                                 </div>
 
-                                <!-- CLO Config -->
                                 <div class="bg-white rounded-lg border border-slate-200 shadow-sm p-5">
                                     <h3 class="font-bold text-slate-800 text-base mb-4 flex items-center">
                                         <span class="w-7 h-7 rounded bg-emerald-100 text-emerald-600 flex items-center justify-center mr-2">
@@ -566,9 +519,7 @@
                                         </span>
                                         Mục tiêu CLO (Toàn bài)
                                     </h3>
-                                    <div class="space-y-4" id="cloConfigList">
-                                        <!-- JS Generated -->
-                                    </div>
+                                    <div class="space-y-4" id="cloConfigList"></div>
                                     <div class="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center">
                                         <span class="font-bold text-slate-600 text-xs uppercase">Tổng CLO Target:</span>
                                         <span class="font-bold text-base" id="cloTotalSum">0%</span>
@@ -591,7 +542,7 @@
             <span class="text-xs font-bold text-slate-500 uppercase">Cấu hình ô</span>
             <button onclick="closeEditor()" class="text-slate-400 hover:text-red-500"><i class="fa-solid fa-times"></i></button>
         </div>
-        
+
         <div class="mb-3">
             <label class="text-xs block text-slate-600 mb-1">Số lượng câu hỏi:</label>
             <input type="number" id="editorQ" class="w-full border border-slate-300 rounded px-2 py-1 text-sm font-bold text-center focus:border-blue-500 outline-none" min="0">
@@ -616,105 +567,183 @@
     </div>
 
     <script>
+        // =========================
+        // ========== CLOUD =========
+        // =========================
+        const CLOUD_PROJECT_ID = "blueprint2026"; // đổi tên nếu muốn lưu nhiều blueprint khác nhau
+        let cloudLastSavedAt = null;
+        let cloudLastUrl = null;
+
+        function setCloudStatus(text) {
+            const el = document.getElementById("cloudStatus");
+            if (el) el.innerText = text;
+        }
+
+        function getState() {
+            return {
+                appData,
+                clos,
+                configTarget,
+                currentSystemIdx
+            };
+        }
+
+        function applyState(state) {
+            if (!state) return;
+
+            if (Array.isArray(state.appData)) appData = state.appData;
+            if (Array.isArray(state.clos)) clos = state.clos;
+            if (state.configTarget) configTarget = state.configTarget;
+            if (Number.isInteger(state.currentSystemIdx)) currentSystemIdx = state.currentSystemIdx;
+
+            // đảm bảo configTarget.clo đủ key cho clos
+            if (!configTarget || !configTarget.clo) {
+                configTarget = configTarget || {};
+                configTarget.clo = {};
+            }
+            clos.forEach(c => {
+                if (configTarget.clo[c.id] === undefined) configTarget.clo[c.id] = 0;
+            });
+
+            // clamp idx
+            if (currentSystemIdx < 0) currentSystemIdx = 0;
+            if (currentSystemIdx >= appData.length) currentSystemIdx = Math.max(appData.length - 1, 0);
+
+            renderSidebar();
+            renderMatrix();
+            renderCLOInfo();
+            renderConfig();
+            updateGlobalStats();
+        }
+
+        async function saveToCloud(projectId = CLOUD_PROJECT_ID) {
+            try {
+                setCloudStatus("đang lưu...");
+                const payload = getState();
+
+                const r = await fetch("/api/save", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ projectId, data: payload })
+                });
+
+                const j = await r.json();
+                if (!r.ok) throw new Error(j.error || "Save failed");
+
+                cloudLastSavedAt = new Date().toISOString();
+                cloudLastUrl = j.url;
+
+                setCloudStatus("đã lưu");
+                // lưu thêm local để bạn debug nếu cần
+                localStorage.setItem("matrix_cloud_url_" + projectId, j.url);
+                localStorage.setItem("matrix_cloud_savedAt_" + projectId, cloudLastSavedAt);
+
+                alert("✅ Đã lưu lên cloud (Vercel Blob)!");
+            } catch (e) {
+                console.error(e);
+                setCloudStatus("lỗi");
+                alert("❌ Lưu cloud lỗi: " + (e?.message || e));
+            }
+        }
+
+        async function loadFromCloud(projectId = CLOUD_PROJECT_ID) {
+            try {
+                setCloudStatus("đang tải...");
+                const r = await fetch(`/api/load?projectId=${encodeURIComponent(projectId)}`, { cache: "no-store" });
+                const j = await r.json();
+
+                if (!j.found) {
+                    setCloudStatus("chưa có dữ liệu");
+                    return alert("Chưa có dữ liệu cloud cho projectId: " + projectId);
+                }
+
+                applyState(j.data);
+                cloudLastSavedAt = j.savedAt || null;
+                cloudLastUrl = j.meta?.url || null;
+
+                setCloudStatus("đã tải");
+                alert("✅ Đã tải dữ liệu từ cloud!");
+            } catch (e) {
+                console.error(e);
+                setCloudStatus("lỗi");
+                alert("❌ Tải cloud lỗi: " + (e?.message || e));
+            }
+        }
+
+        // autosave (tùy chọn): cứ có thay đổi thì tự lưu sau 1.2s
+        let _autosaveTimer = null;
+        function autoSaveDebounced() {
+            // BẬT nếu muốn autosave:
+            const ENABLE_AUTOSAVE = false;
+            if (!ENABLE_AUTOSAVE) return;
+
+            if (_autosaveTimer) clearTimeout(_autosaveTimer);
+            _autosaveTimer = setTimeout(() => {
+                saveToCloud().catch(()=>{});
+            }, 1200);
+        }
+
+        // =========================
+        // ====== APP LOGIC =========
+        // =========================
+
         // --- DATA INITIALIZATION ---
         const initialData = [
-            {
-                name: "Bệnh Tạng phủ",
-                weight: 9.09,
-                problems: [
-                    { name: "Biện chứng tạng phủ" }
-                ]
-            },
-            {
-                name: "Bệnh hệ thống Tim mạch – hô hấp",
-                weight: 13.64,
-                problems: [
-                    { name: "YHHĐ: Bệnh mạch vành mạn. YHCT: Tâm thống." },
-                    { name: "YHHĐ: Tăng huyết áp. YHCT: Huyễn vựng." },
-                    { name: "YHHĐ: Suy tĩnh mạch mạn tính." },
-                    { name: "YHHĐ: COPD." },
-                    { name: "YHHĐ: Hen phế quản. YHCT: Háo chứng, suyễn chứng." }
-                ]
-            },
-            {
-                name: "Bệnh hệ thống Tiết niệu – Nội tiết - Huyết học",
-                weight: 11.36,
-                problems: [
-                    { name: "YHHĐ: Nhiễm khuẩn tiết niệu. YHCT: Lâm chứng." },
-                    { name: "YHHĐ: Béo phì. YHCT: Phì bạng." },
-                    { name: "YHHĐ: Đái tháo đường. YHCT: Tiêu khát." },
-                    { name: "YHHĐ: Thiếu máu mạn." }
-                ]
-            },
-            {
-                name: "Bệnh hệ thống Tiêu hóa - gan mật",
-                weight: 11.36,
-                problems: [
-                    { name: "YHHĐ: Viêm loét dạ dày tá tràng. YHCT: Vị quản thống, Phúc mãn, Bĩ mãn, Chứng trướng." },
-                    { name: "YHHĐ: GERD. YHCT: Hung thống, Ái khí." },
-                    { name: "YHHĐ: Hội chứng ruột kích thích. YHCT: Tiết tả, Phúc mãn, Tiện bí." },
-                    { name: "YHHĐ: Viêm gan mạn. YHCT: Hoàng đản, chứng trướng." },
-                    { name: "YHHĐ: Xơ gan. YHCT: Hoàng đản, Cổ trướng." }
-                ]
-            },
-            {
-                name: "Bệnh hệ thống Ngũ quan – Lão khoa",
-                weight: 4.55,
-                problems: [
-                    { name: "YHHĐ: Bệnh thận mạn. YHCT: Hư lao." },
-                    { name: "YHHĐ: Viêm mũi dị ứng." }
-                ]
-            },
-            {
-                name: "Bệnh hệ thống Cơ - xương – khớp",
-                weight: 13.64,
-                problems: [
-                    { name: "YHHĐ: Thoái hóa cột sống thắt lưng. YHCT: Tý chứng, Yêu thống." },
-                    { name: "YHHĐ: Thoái hóa khớp gối. YHCT: Tý chứng, Hạc tất phong." },
-                    { name: "YHHĐ: Loãng xương." },
-                    { name: "YHHĐ: Viêm khớp dạng thấp. YHCT: Tý chứng." },
-                    { name: "YHHĐ: Viêm khớp gout. YHCT: Tý chứng, Thống phong." }
-                ]
-            },
-            {
-                name: "Bệnh hệ thống Thần kinh",
-                weight: 13.64,
-                problems: [
-                    { name: "YHHĐ: Di chứng tai biến mạch máu não. YHCT: Bán thân bất toại." },
-                    { name: "YHHĐ: Đau đầu. YHCT: Đầu thống, Đàm chứng." },
-                    { name: "YHHĐ: Đau thần kinh tọa. YHCT: Yêu thống, Yêu cước thống, Tọa cốt phong, Ma mộc bất nhân." },
-                    { name: "YHHĐ: Liệt mặt. YHCT: Khẩu nhãn oa tà." },
-                    { name: "YHHĐ: Mất ngủ. YHCT: Thất miên." }
-                ]
-            },
-            {
-                name: "Bệnh hệ thống Nhiễm – Phụ",
-                weight: 9.09,
-                problems: [
-                    { name: "YHHĐ: Viêm gan siêu vi. YHCT: Hoàng đản." },
-                    { name: "YHHĐ: Sốt xuất huyết Dengue. YHCT: Ôn bệnh." },
-                    { name: "YHHĐ: Đau bụng kinh nguyên phát. YHCT: Thống kinh." },
-                    { name: "YHHĐ: Rối loạn mãn kinh và chu mãn kinh." }
-                ]
-            },
-            {
-                name: "Bệnh hệ thống Nhi khoa",
-                weight: 4.55,
-                problems: [
-                    { name: "YHHĐ: Suy dinh dưỡng ở trẻ em. YHCT: Cam tích." },
-                    { name: "YHHĐ: Đái dầm ở trẻ em. YHCT: Dạ niệu." }
-                ]
-            },
-            {
-                name: "Bệnh hệ thống Ngoại khoa - Da liễu",
-                weight: 9.09,
-                problems: [
-                    { name: "YHHĐ: Trĩ. YHCT: Hạ trĩ." },
-                    { name: "YHHĐ: Sỏi đường niệu. YHCT: Lâm chứng." },
-                    { name: "YHHĐ: Mày đay." },
-                    { name: "YHHĐ: Mụn trứng cá." }
-                ]
-            }
+            { name: "Bệnh Tạng phủ", weight: 9.09, problems: [ { name: "Biện chứng tạng phủ" } ] },
+            { name: "Bệnh hệ thống Tim mạch – hô hấp", weight: 13.64, problems: [
+                { name: "YHHĐ: Bệnh mạch vành mạn. YHCT: Tâm thống." },
+                { name: "YHHĐ: Tăng huyết áp. YHCT: Huyễn vựng." },
+                { name: "YHHĐ: Suy tĩnh mạch mạn tính." },
+                { name: "YHHĐ: COPD." },
+                { name: "YHHĐ: Hen phế quản. YHCT: Háo chứng, suyễn chứng." }
+            ]},
+            { name: "Bệnh hệ thống Tiết niệu – Nội tiết - Huyết học", weight: 11.36, problems: [
+                { name: "YHHĐ: Nhiễm khuẩn tiết niệu. YHCT: Lâm chứng." },
+                { name: "YHHĐ: Béo phì. YHCT: Phì bạng." },
+                { name: "YHHĐ: Đái tháo đường. YHCT: Tiêu khát." },
+                { name: "YHHĐ: Thiếu máu mạn." }
+            ]},
+            { name: "Bệnh hệ thống Tiêu hóa - gan mật", weight: 11.36, problems: [
+                { name: "YHHĐ: Viêm loét dạ dày tá tràng. YHCT: Vị quản thống, Phúc mãn, Bĩ mãn, Chứng trướng." },
+                { name: "YHHĐ: GERD. YHCT: Hung thống, Ái khí." },
+                { name: "YHHĐ: Hội chứng ruột kích thích. YHCT: Tiết tả, Phúc mãn, Tiện bí." },
+                { name: "YHHĐ: Viêm gan mạn. YHCT: Hoàng đản, chứng trướng." },
+                { name: "YHHĐ: Xơ gan. YHCT: Hoàng đản, Cổ trướng." }
+            ]},
+            { name: "Bệnh hệ thống Ngũ quan – Lão khoa", weight: 4.55, problems: [
+                { name: "YHHĐ: Bệnh thận mạn. YHCT: Hư lao." },
+                { name: "YHHĐ: Viêm mũi dị ứng." }
+            ]},
+            { name: "Bệnh hệ thống Cơ - xương – khớp", weight: 13.64, problems: [
+                { name: "YHHĐ: Thoái hóa cột sống thắt lưng. YHCT: Tý chứng, Yêu thống." },
+                { name: "YHHĐ: Thoái hóa khớp gối. YHCT: Tý chứng, Hạc tất phong." },
+                { name: "YHHĐ: Loãng xương." },
+                { name: "YHHĐ: Viêm khớp dạng thấp. YHCT: Tý chứng." },
+                { name: "YHHĐ: Viêm khớp gout. YHCT: Tý chứng, Thống phong." }
+            ]},
+            { name: "Bệnh hệ thống Thần kinh", weight: 13.64, problems: [
+                { name: "YHHĐ: Di chứng tai biến mạch máu não. YHCT: Bán thân bất toại." },
+                { name: "YHHĐ: Đau đầu. YHCT: Đầu thống, Đàm chứng." },
+                { name: "YHHĐ: Đau thần kinh tọa. YHCT: Yêu thống, Yêu cước thống, Tọa cốt phong, Ma mộc bất nhân." },
+                { name: "YHHĐ: Liệt mặt. YHCT: Khẩu nhãn oa tà." },
+                { name: "YHHĐ: Mất ngủ. YHCT: Thất miên." }
+            ]},
+            { name: "Bệnh hệ thống Nhiễm – Phụ", weight: 9.09, problems: [
+                { name: "YHHĐ: Viêm gan siêu vi. YHCT: Hoàng đản." },
+                { name: "YHHĐ: Sốt xuất huyết Dengue. YHCT: Ôn bệnh." },
+                { name: "YHHĐ: Đau bụng kinh nguyên phát. YHCT: Thống kinh." },
+                { name: "YHHĐ: Rối loạn mãn kinh và chu mãn kinh." }
+            ]},
+            { name: "Bệnh hệ thống Nhi khoa", weight: 4.55, problems: [
+                { name: "YHHĐ: Suy dinh dưỡng ở trẻ em. YHCT: Cam tích." },
+                { name: "YHHĐ: Đái dầm ở trẻ em. YHCT: Dạ niệu." }
+            ]},
+            { name: "Bệnh hệ thống Ngoại khoa - Da liễu", weight: 9.09, problems: [
+                { name: "YHHĐ: Trĩ. YHCT: Hạ trĩ." },
+                { name: "YHHĐ: Sỏi đường niệu. YHCT: Lâm chứng." },
+                { name: "YHHĐ: Mày đay." },
+                { name: "YHHĐ: Mụn trứng cá." }
+            ]}
         ];
 
         let clos = [
@@ -740,16 +769,21 @@
 
         // --- INIT ---
         function init() {
+            // thử auto-load 1 lần (nếu có cloud)
+            // Nếu bạn không muốn tự tải khi mở trang, comment 2 dòng dưới.
+            loadFromCloud().catch(() => {});
+
+            // init local data (fallback)
             appData = initialData.map(cat => ({
                 name: cat.name,
-                weight: cat.weight, 
+                weight: cat.weight,
                 problems: cat.problems.map(p => ({
                     name: p.name,
-                    weight: 1, 
+                    weight: 1,
                     matrix: {}
                 }))
             }));
-            
+
             renderSidebar();
             renderMatrix();
             renderCLOInfo();
@@ -818,13 +852,12 @@
                 document.getElementById('matrixBody').innerHTML = '<tr><td colspan="10" class="p-4 text-center text-slate-500">Chưa có hệ thống nào. Vui lòng thêm mới.</td></tr>';
                 return;
             }
-            
+
             const sys = appData[currentSystemIdx];
             document.getElementById('currentSystemTitle').innerText = sys.name;
             const thead = document.getElementById('matrixHead');
             const tbody = document.getElementById('matrixBody');
 
-            // Build Header
             let headHtml = `<tr><th class="corner-header">Vấn đề lâm sàng</th>`;
             clos.forEach(clo => headHtml += `<th style="min-width: 80px;" title="${clo.name}">${clo.id}</th>`);
             headHtml += `<th style="width: 60px;" class="bg-slate-100">Tổng</th></tr>`;
@@ -832,7 +865,6 @@
 
             tbody.innerHTML = '';
 
-            // Track Column Totals
             let colTotals = {};
             clos.forEach(c => colTotals[c.id] = 0);
             let sysTotal = 0;
@@ -854,7 +886,7 @@
                     const hasData = cellData && cellData.q > 0;
                     const bloomClass = hasData ? `bloom-${cellData.bloom}` : 'empty';
                     const content = hasData ? cellData.q : '';
-                    
+
                     if(hasData) {
                         const val = parseInt(cellData.q);
                         rowTotal += val;
@@ -864,12 +896,12 @@
 
                     rowHtml += `<td><div class="matrix-cell ${bloomClass}" onclick="openCell(event, ${pIdx}, '${clo.id}')">${content}</div></td>`;
                 });
+
                 rowHtml += `<td class="text-center font-bold text-blue-700 bg-slate-50">${rowTotal}</td>`;
                 tr.innerHTML = rowHtml;
                 tbody.appendChild(tr);
             });
 
-            // Add Footer Row for Column Totals
             const footerTr = document.createElement('tr');
             footerTr.className = 'footer-row';
             let footerHtml = `<td class="row-header">TỔNG CỘNG:</td>`;
@@ -881,7 +913,6 @@
             footerTr.innerHTML = footerHtml;
             tbody.appendChild(footerTr);
 
-            // Add Row Button
             const addRow = document.createElement('tr');
             addRow.innerHTML = `<td colspan="${clos.length + 2}" class="p-2 text-center">
                 <button onclick="addProblem()" class="text-blue-600 hover:text-blue-800 text-xs font-bold uppercase"><i class="fa-solid fa-plus"></i> Thêm vấn đề</button>
@@ -902,6 +933,8 @@
                 renderSidebar();
                 renderMatrix();
                 renderConfig();
+                updateGlobalStats();
+                autoSaveDebounced();
             }
         }
 
@@ -909,7 +942,7 @@
             if(confirm(`Bạn có chắc muốn xóa hệ thống "${appData[idx].name}" không?`)) {
                 appData.splice(idx, 1);
                 if (appData.length === 0) {
-                     // Handle empty state if needed
+                    currentSystemIdx = 0;
                 } else if (currentSystemIdx >= appData.length) {
                     currentSystemIdx = appData.length - 1;
                 }
@@ -917,20 +950,27 @@
                 renderMatrix();
                 renderConfig();
                 updateGlobalStats();
+                autoSaveDebounced();
             }
         }
 
-        function updateProblemName(pIdx, val) { 
+        function updateProblemName(pIdx, val) {
             if(appData[currentSystemIdx] && appData[currentSystemIdx].problems[pIdx]) {
-                appData[currentSystemIdx].problems[pIdx].name = val; 
+                appData[currentSystemIdx].problems[pIdx].name = val;
+                renderConfig();
+                renderSidebar();
+                autoSaveDebounced();
             }
         }
 
-        function addProblem() { 
+        function addProblem() {
             if (appData.length === 0) return;
-            appData[currentSystemIdx].problems.push({ name: "Vấn đề mới...", weight: 1, matrix: {} }); 
-            renderMatrix(); 
+            appData[currentSystemIdx].problems.push({ name: "Vấn đề mới...", weight: 1, matrix: {} });
+            renderMatrix();
             renderConfig();
+            renderSidebar();
+            updateGlobalStats();
+            autoSaveDebounced();
         }
 
         function deleteProblem(pIdx) {
@@ -939,8 +979,9 @@
                 appData[currentSystemIdx].problems.splice(pIdx, 1);
                 renderMatrix();
                 renderConfig();
-                renderSidebar(); // Update counts
+                renderSidebar();
                 updateGlobalStats();
+                autoSaveDebounced();
             }
         }
 
@@ -963,6 +1004,8 @@
         function updateCLOData(idx, field, val) {
             clos[idx][field] = val;
             if(field === 'name') renderMatrix();
+            renderConfig();
+            autoSaveDebounced();
         }
 
         // --- RENDER CONFIG & LIVE MONITOR ---
@@ -987,24 +1030,21 @@
             if (appData.length === 0) return;
             const currentSys = appData[currentSystemIdx];
             const stats = calculateActualStats();
-            
-            // 1. System Weight Input
+
             document.getElementById('systemWeightInput').value = currentSys.weight;
             const sysActual = stats.systemPercents[currentSystemIdx] || 0;
             document.getElementById('systemActualPercent').innerText = sysActual + '%';
             document.getElementById('systemActualBar').style.width = sysActual + '%';
-            setDiffColor('systemActualBar', currentSys.weight, sysActual);
 
-            // 2. Problem Weights
             const probList = document.getElementById('problemWeightList');
             probList.innerHTML = '';
-            
+
             const sysRelWeightTotal = currentSys.problems.reduce((a,b) => a + (b.weight||0), 0);
 
             currentSys.problems.forEach((prob, pIdx) => {
                 const w = prob.weight || 0;
                 const expectedShare = sysRelWeightTotal ? (w/sysRelWeightTotal)*100 : 0;
-                const sysTotalQ = stats.systemCounts[currentSystemIdx] || 1; 
+                const sysTotalQ = stats.systemCounts[currentSystemIdx] || 1;
                 const probQ = stats.problemCounts[`${currentSystemIdx}-${pIdx}`] || 0;
                 const probActual = Math.round((probQ / sysTotalQ) * 100);
 
@@ -1014,7 +1054,7 @@
                             <div class="flex-1 font-medium text-slate-700 text-sm" title="${prob.name}">${prob.name}</div>
                             <div class="flex items-center gap-1">
                                 <span class="text-[10px] text-slate-400 mr-1">Trọng số:</span>
-                                <input type="number" value="${w}" onchange="updateProblemWeight(${pIdx}, this.value)" class="config-input w-14 text-right font-bold text-slate-700" placeholder="1"> 
+                                <input type="number" value="${w}" onchange="updateProblemWeight(${pIdx}, this.value)" class="config-input w-14 text-right font-bold text-slate-700" placeholder="1">
                             </div>
                         </div>
                         <div class="mt-1">
@@ -1029,15 +1069,14 @@
                 `;
             });
 
-            // 3. Bloom Config
             const bloomList = document.getElementById('bloomConfigList');
             bloomList.innerHTML = '';
             let bloomTargetTotal = 0;
-            [1, 2, 3, 4, 5, 6].forEach(lvl => {
+            [1,2,3,4,5,6].forEach(lvl => {
                 const target = configTarget.bloom[lvl] || 0;
                 const actual = stats.bloomPercents[lvl] || 0;
                 bloomTargetTotal += parseInt(target);
-                
+
                 bloomList.innerHTML += `
                     <div class="p-2 bg-slate-50 rounded border border-slate-100">
                         <div class="flex justify-between mb-1">
@@ -1056,7 +1095,6 @@
             });
             document.getElementById('bloomTotalSum').innerText = bloomTargetTotal + '%';
 
-            // 4. CLO Config
             const cloList = document.getElementById('cloConfigList');
             cloList.innerHTML = '';
             let cloTargetTotal = 0;
@@ -1064,7 +1102,7 @@
                 const target = configTarget.clo[clo.id] || 0;
                 const actual = stats.cloPercents[clo.id] || 0;
                 cloTargetTotal += parseInt(target);
-                
+
                 cloList.innerHTML += `
                     <div class="flex items-center gap-3">
                         <div class="w-16 text-sm font-medium text-slate-600">${clo.id}</div>
@@ -1083,42 +1121,37 @@
             document.getElementById('cloTotalSum').innerText = cloTargetTotal + '%';
         }
 
-        function setDiffColor(id, target, actual) {
-            // Optional: Helper for color logic
-        }
-
         function updateConfig(type, id, value) {
             if (type === 'bloom') configTarget.bloom[id] = parseInt(value) || 0;
             else configTarget.clo[id] = parseInt(value) || 0;
             renderConfig();
+            autoSaveDebounced();
         }
 
         function updateSystemWeight(val) {
             appData[currentSystemIdx].weight = parseFloat(val) || 0;
             renderConfig();
+            autoSaveDebounced();
         }
 
         function updateProblemWeight(pIdx, val) {
             appData[currentSystemIdx].problems[pIdx].weight = parseInt(val) || 0;
             renderConfig();
+            autoSaveDebounced();
         }
 
         // --- LOGIC: AUTO GENERATOR ---
         function runAutoGenerator() {
             const totalQ = parseInt(document.getElementById('autoTotalQ').value) || 100;
-            
             if(!confirm("Hệ thống sẽ xóa dữ liệu hiện tại và tạo mới dựa trên cấu hình tỉ trọng. Tiếp tục?")) return;
-            
-            // 1. Reset Matrix
+
             appData.forEach(sys => sys.problems.forEach(p => p.matrix = {}));
 
-            // 2. Prepare Distribution Pools (Weighted Random)
             let bloomDeck = [];
             Object.keys(configTarget.bloom).forEach(lvl => {
                 const count = Math.round(totalQ * (configTarget.bloom[lvl] / 100));
                 for(let i=0; i<count; i++) bloomDeck.push(parseInt(lvl));
             });
-            // Fill remainder
             while(bloomDeck.length < totalQ) bloomDeck.push(Math.floor(Math.random() * 6) + 1);
             bloomDeck = shuffle(bloomDeck);
 
@@ -1130,33 +1163,25 @@
             while(cloDeck.length < totalQ) cloDeck.push(clos[Math.floor(Math.random()*clos.length)].id);
             cloDeck = shuffle(cloDeck);
 
-            // 3. Calculate Exact Questions per System/Problem
             const totalSysWeight = appData.reduce((acc, sys) => acc + (parseFloat(sys.weight)||0), 0);
-            
             let currentQCount = 0;
 
             appData.forEach(sys => {
                 if (!sys.weight) return;
-                // Calculate target Q for this system based on its global weight %
                 let sysTargetQ = (parseFloat(sys.weight) / totalSysWeight) * totalQ;
-                
+
                 const totalProbWeight = sys.problems.reduce((acc, p) => acc + (parseFloat(p.weight)||0), 0);
-                
+
                 sys.problems.forEach(prob => {
                      if(!prob.weight) return;
-                     // Calculate target Q for this problem
-                     // Logic: (ProbWeight / TotalProbWeightInSys) * SysTargetQ
                      let probTargetQ = (parseFloat(prob.weight) / totalProbWeight) * sysTargetQ;
-                     
-                     // Round to integer, accumulating probability could be better but simple round is okay for now
+
                      let count = Math.floor(probTargetQ);
                      if (Math.random() < (probTargetQ - count)) count++;
 
-                     // Distribute 'count' questions into this problem's row
                      for(let k=0; k<count; k++) {
-                         if (currentQCount >= totalQ) break; // Hard stop
+                         if (currentQCount >= totalQ) break;
 
-                         // Get properties from decks to maintain global distribution
                          if (cloDeck.length === 0) cloDeck.push(clos[Math.floor(Math.random()*clos.length)].id);
                          if (bloomDeck.length === 0) bloomDeck.push(Math.floor(Math.random() * 6) + 1);
 
@@ -1174,6 +1199,7 @@
             renderSidebar();
             updateGlobalStats();
             renderConfig();
+            autoSaveDebounced();
             alert(`Đã tạo xong ma trận với ${currentQCount} câu hỏi dựa trên tỉ trọng cấu hình!`);
         }
 
@@ -1212,7 +1238,6 @@
                 });
             });
 
-            // Convert to percents
             let bloomPercents = {};
             Object.keys(bloomCounts).forEach(k => bloomPercents[k] = total ? Math.round((bloomCounts[k]/total)*100) : 0);
 
@@ -1230,7 +1255,7 @@
             e.stopPropagation();
             activeCell = { sysIdx: currentSystemIdx, probIdx: pIdx, cloId: cloId };
             const cellData = appData[currentSystemIdx].problems[pIdx].matrix[cloId] || { q: '', bloom: 1 };
-            
+
             document.getElementById('editorQ').value = cellData.q;
             selectBloom(cellData.bloom || 1);
 
@@ -1260,11 +1285,13 @@
             renderMatrix();
             renderSidebar();
             updateGlobalStats();
+            renderConfig();
+            autoSaveDebounced();
         }
 
         function clearCell() {
-             document.getElementById('editorQ').value = '';
-             saveCell();
+            document.getElementById('editorQ').value = '';
+            saveCell();
         }
 
         function closeEditor() {
@@ -1285,8 +1312,8 @@
             appData.forEach((sys, sIdx) => {
                 const sysRow = [`${sIdx + 1}`, sys.name.toUpperCase()];
                 for(let i=0; i<clos.length; i++) sysRow.push("");
-                sysRow.push(0); 
-                
+                sysRow.push(0);
+
                 const sysRowIdx = ws_data.push(sysRow) - 1;
                 let sysSum = 0;
 
@@ -1328,7 +1355,7 @@
             clos.forEach(c => info_data.push([c.id, configTarget.clo[c.id]]));
 
             const wb = XLSX.utils.book_new();
-            
+
             const ws1 = XLSX.utils.aoa_to_sheet(ws_data);
             ws1['!cols'] = [{wch: 6}, {wch: 50}, ...clos.map(()=>({wch: 10})), {wch: 8}];
             XLSX.utils.book_append_sheet(wb, ws1, "Ma trận");
@@ -1352,15 +1379,20 @@
 
         function addCLO() {
             const id = prompt("Nhập mã CLO mới:");
-            if(id) { 
-                const newId = id.toUpperCase(); 
-                clos.push({ id: newId, name: id, desc: "" }); 
+            if(id) {
+                const newId = id.toUpperCase();
+                clos.push({ id: newId, name: id, desc: "" });
                 configTarget.clo[newId] = 0;
-                renderMatrix(); 
+                renderMatrix();
                 renderConfig();
+                renderCLOInfo();
+                autoSaveDebounced();
             }
         }
-        function updateGlobalStats() { document.getElementById('totalQuestionsDisplay').innerText = calculateActualStats().total; }
+
+        function updateGlobalStats() {
+            document.getElementById('totalQuestionsDisplay').innerText = calculateActualStats().total;
+        }
 
         document.addEventListener('click', (e) => {
             const editor = document.getElementById('cellEditor');
