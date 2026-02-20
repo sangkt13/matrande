@@ -1,8 +1,8 @@
 {
-  "name": "matrix-builder-pro-2026",
+  "name": "matrix-blueprint-2026",
   "private": true,
   "type": "module",
   "dependencies": {
-    "openai": "^4.0.0"
+    "@vercel/blob": "^1.0.0"
   }
 }
