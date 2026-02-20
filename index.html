@@ -7,6 +7,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- SheetJS for Real Excel Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
             --primary: #2563EB;
@@ -66,6 +68,7 @@
             transition: all 0.2s;
             cursor: pointer;
             border-left: 3px solid transparent;
+            position: relative;
         }
         .sidebar-item:hover { background-color: #F1F5F9; }
         .sidebar-item.active {
@@ -73,6 +76,13 @@
             color: #1D4ED8;
             border-left-color: #2563EB;
             font-weight: 600;
+        }
+        
+        .sidebar-actions {
+            display: none;
+        }
+        .sidebar-item:hover .sidebar-actions {
+            display: flex;
         }
 
         /* --- Matrix Table --- */
@@ -134,6 +144,14 @@
             line-height: 1.3;
             max-width: 400px;
             box-shadow: 2px 0 5px -2px rgba(0,0,0,0.05);
+        }
+
+        .row-action-btn {
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .matrix-table tr:hover .row-action-btn {
+            opacity: 1;
         }
         
         .matrix-table tr.footer-row td {
@@ -276,7 +294,43 @@
             white-space: normal;
             font-size: 12px;
             line-height: 1.4;
+            outline: none;
+            border: 1px dashed transparent;
+            padding: 2px;
         }
+        .text-problem:focus {
+            border-color: #94A3B8;
+            background: #F8FAFC;
+        }
+        
+        /* Export Menu */
+        .export-group {
+            position: relative;
+        }
+        .export-dropdown {
+            position: absolute;
+            right: 0;
+            top: 100%;
+            margin-top: 5px;
+            background: white;
+            border: 1px solid #E2E8F0;
+            border-radius: 6px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            display: none;
+            min-width: 200px;
+            z-index: 50;
+        }
+        .export-group:hover .export-dropdown {
+            display: block;
+        }
+        .export-item {
+            display: block;
+            padding: 8px 12px;
+            font-size: 13px;
+            color: #334155;
+            cursor: pointer;
+        }
+        .export-item:hover { background-color: #F1F5F9; color: #0F172A; }
     </style>
 </head>
 <body class="flex flex-col">
@@ -308,9 +362,20 @@
                 <div class="text-[10px] text-slate-500 font-bold uppercase">Tổng câu</div>
                 <div class="text-lg font-bold text-slate-800" id="totalQuestionsDisplay">0</div>
             </div>
-            <button onclick="exportExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded text-sm font-medium flex items-center gap-2 transition-colors">
-                <i class="fa-solid fa-file-excel"></i> Xuất Excel
-            </button>
+            
+            <div class="export-group">
+                <button class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded text-sm font-medium flex items-center gap-2 transition-colors">
+                    <i class="fa-solid fa-file-excel"></i> Xuất Excel <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                </button>
+                <div class="export-dropdown">
+                    <div onclick="exportRealExcel()" class="export-item font-bold border-b border-slate-100">
+                        <i class="fa-solid fa-table mr-2 text-emerald-600"></i> Xuất Ma trận hiện tại
+                    </div>
+                    <div onclick="downloadTemplate()" class="export-item text-slate-500">
+                        <i class="fa-solid fa-file-arrow-down mr-2"></i> Tải Form mẫu gốc
+                    </div>
+                </div>
+            </div>
         </div>
     </header>
 
@@ -326,7 +391,10 @@
             <div class="flex-1 overflow-y-auto p-2 space-y-1" id="sidebarList">
                 <!-- JS Generated -->
             </div>
-            <div class="p-3 border-t border-slate-200">
+            <div class="p-3 border-t border-slate-200 flex flex-col gap-2">
+                 <button onclick="addSystem()" class="w-full py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 rounded text-xs font-bold transition-colors">
+                    <i class="fa-solid fa-folder-plus mr-1"></i> Thêm Hệ Thống
+                 </button>
                  <button onclick="addCLO()" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded text-xs font-bold transition-colors">
                     <i class="fa-solid fa-plus mr-1"></i> Thêm CLO (Cột)
                  </button>
@@ -349,7 +417,7 @@
                     </button>
                 </div>
                 <div class="text-xs text-slate-400 italic" id="matrixHint">
-                    * Chọn ô để nhập số câu hỏi thủ công
+                    * Bấm vào tên để sửa. Chọn ô để nhập điểm.
                 </div>
             </div>
 
@@ -549,7 +617,6 @@
 
     <script>
         // --- DATA INITIALIZATION ---
-        // Provided Data Structure with Weights
         const initialData = [
             {
                 name: "Bệnh Tạng phủ",
@@ -675,10 +742,10 @@
         function init() {
             appData = initialData.map(cat => ({
                 name: cat.name,
-                weight: cat.weight, // Use provided specific weights
+                weight: cat.weight, 
                 problems: cat.problems.map(p => ({
                     name: p.name,
-                    weight: 1, // Default to equal weight inside the category unless specified
+                    weight: 1, 
                     matrix: {}
                 }))
             }));
@@ -712,7 +779,7 @@
             }
         }
 
-        // --- RENDER MATRIX ---
+        // --- RENDER SIDEBAR ---
         function renderSidebar() {
             const list = document.getElementById('sidebarList');
             list.innerHTML = '';
@@ -721,25 +788,37 @@
                 sys.problems.forEach(p => Object.values(p.matrix).forEach(cell => qCount += (parseInt(cell.q)||0)));
 
                 const div = document.createElement('div');
-                div.className = `sidebar-item px-3 py-2 text-sm flex justify-between items-center ${idx === currentSystemIdx ? 'active' : 'text-slate-600'}`;
+                div.className = `sidebar-item px-3 py-2 text-sm flex justify-between items-center group ${idx === currentSystemIdx ? 'active' : 'text-slate-600'}`;
                 div.innerHTML = `
-                    <span class="truncate flex-1">${sys.name}</span>
-                    <span class="text-[10px] bg-slate-200 text-slate-600 px-1.5 rounded-full font-bold ml-2">${qCount}</span>
+                    <span class="truncate flex-1" onclick="selectSystem(${idx})">${sys.name}</span>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10px] bg-slate-200 text-slate-600 px-1.5 rounded-full font-bold" onclick="selectSystem(${idx})">${qCount}</span>
+                        <button onclick="deleteSystem(${idx})" title="Xóa hệ thống" class="sidebar-actions text-red-400 hover:text-red-600 hover:bg-red-50 p-1 rounded transition-colors">
+                            <i class="fa-solid fa-trash-can text-xs"></i>
+                        </button>
+                    </div>
                 `;
-                div.onclick = () => {
-                    currentSystemIdx = idx;
-                    renderSidebar();
-                    if(currentTab === 'matrix') renderMatrix();
-                    if(currentTab === 'config') {
-                        document.getElementById('configSystemSelect').value = idx;
-                        renderConfig();
-                    }
-                };
                 list.appendChild(div);
             });
         }
 
+        function selectSystem(idx) {
+            currentSystemIdx = idx;
+            renderSidebar();
+            if(currentTab === 'matrix') renderMatrix();
+            if(currentTab === 'config') {
+                document.getElementById('configSystemSelect').value = idx;
+                renderConfig();
+            }
+        }
+
+        // --- RENDER MATRIX ---
         function renderMatrix() {
+            if (appData.length === 0) {
+                document.getElementById('matrixBody').innerHTML = '<tr><td colspan="10" class="p-4 text-center text-slate-500">Chưa có hệ thống nào. Vui lòng thêm mới.</td></tr>';
+                return;
+            }
+            
             const sys = appData[currentSystemIdx];
             document.getElementById('currentSystemTitle').innerText = sys.name;
             const thead = document.getElementById('matrixHead');
@@ -760,8 +839,13 @@
 
             sys.problems.forEach((prob, pIdx) => {
                 const tr = document.createElement('tr');
-                let rowHtml = `<td class="row-header">
-                    <div class="text-problem">${prob.name}</div>
+                let rowHtml = `<td class="row-header group">
+                    <div class="flex justify-between items-start">
+                        <div class="text-problem flex-1 mr-2" contenteditable="true" onblur="updateProblemName(${pIdx}, this.innerText)">${prob.name}</div>
+                        <button onclick="deleteProblem(${pIdx})" title="Xóa vấn đề" class="row-action-btn text-red-300 hover:text-red-500 pt-0.5">
+                             <i class="fa-solid fa-circle-xmark"></i>
+                        </button>
+                    </div>
                 </td>`;
                 let rowTotal = 0;
 
@@ -769,7 +853,6 @@
                     const cellData = prob.matrix[clo.id];
                     const hasData = cellData && cellData.q > 0;
                     const bloomClass = hasData ? `bloom-${cellData.bloom}` : 'empty';
-                    // Display the number strictly if exists
                     const content = hasData ? cellData.q : '';
                     
                     if(hasData) {
@@ -804,6 +887,61 @@
                 <button onclick="addProblem()" class="text-blue-600 hover:text-blue-800 text-xs font-bold uppercase"><i class="fa-solid fa-plus"></i> Thêm vấn đề</button>
             </td>`;
             tbody.appendChild(addRow);
+        }
+
+        // --- SYSTEM & PROBLEM MANAGEMENT ---
+        function addSystem() {
+            const name = prompt("Nhập tên hệ thống mới:", "Hệ thống mới");
+            if (name) {
+                appData.push({
+                    name: name,
+                    weight: 10,
+                    problems: [{ name: "Vấn đề 1...", weight: 1, matrix: {} }]
+                });
+                currentSystemIdx = appData.length - 1;
+                renderSidebar();
+                renderMatrix();
+                renderConfig();
+            }
+        }
+
+        function deleteSystem(idx) {
+            if(confirm(`Bạn có chắc muốn xóa hệ thống "${appData[idx].name}" không?`)) {
+                appData.splice(idx, 1);
+                if (appData.length === 0) {
+                     // Handle empty state if needed
+                } else if (currentSystemIdx >= appData.length) {
+                    currentSystemIdx = appData.length - 1;
+                }
+                renderSidebar();
+                renderMatrix();
+                renderConfig();
+                updateGlobalStats();
+            }
+        }
+
+        function updateProblemName(pIdx, val) { 
+            if(appData[currentSystemIdx] && appData[currentSystemIdx].problems[pIdx]) {
+                appData[currentSystemIdx].problems[pIdx].name = val; 
+            }
+        }
+
+        function addProblem() { 
+            if (appData.length === 0) return;
+            appData[currentSystemIdx].problems.push({ name: "Vấn đề mới...", weight: 1, matrix: {} }); 
+            renderMatrix(); 
+            renderConfig();
+        }
+
+        function deleteProblem(pIdx) {
+            const probName = appData[currentSystemIdx].problems[pIdx].name;
+            if(confirm(`Xóa vấn đề: "${probName}"?`)) {
+                appData[currentSystemIdx].problems.splice(pIdx, 1);
+                renderMatrix();
+                renderConfig();
+                renderSidebar(); // Update counts
+                updateGlobalStats();
+            }
         }
 
         // --- RENDER CLO INFO ---
@@ -846,9 +984,8 @@
         }
 
         function renderConfig() {
+            if (appData.length === 0) return;
             const currentSys = appData[currentSystemIdx];
-            
-            // Calculate Global Stats for Comparison
             const stats = calculateActualStats();
             
             // 1. System Weight Input
@@ -862,14 +999,11 @@
             const probList = document.getElementById('problemWeightList');
             probList.innerHTML = '';
             
-            // Calculate total relative weight in this system for normalization
             const sysRelWeightTotal = currentSys.problems.reduce((a,b) => a + (b.weight||0), 0);
 
             currentSys.problems.forEach((prob, pIdx) => {
                 const w = prob.weight || 0;
                 const expectedShare = sysRelWeightTotal ? (w/sysRelWeightTotal)*100 : 0;
-
-                // Calculate actual % of this problem within the system
                 const sysTotalQ = stats.systemCounts[currentSystemIdx] || 1; 
                 const probQ = stats.problemCounts[`${currentSystemIdx}-${pIdx}`] || 0;
                 const probActual = Math.round((probQ / sysTotalQ) * 100);
@@ -1015,7 +1149,6 @@
                      let probTargetQ = (parseFloat(prob.weight) / totalProbWeight) * sysTargetQ;
                      
                      // Round to integer, accumulating probability could be better but simple round is okay for now
-                     // We use a probabilistic rounding to handle e.g. 2.73 questions
                      let count = Math.floor(probTargetQ);
                      if (Math.random() < (probTargetQ - count)) count++;
 
@@ -1138,13 +1271,85 @@
             document.getElementById('cellEditor').style.display = 'none';
         }
 
-        // --- GENERAL ---
-        function updateProblemName(pIdx, val) { appData[currentSystemIdx].problems[pIdx].name = val; }
-        function addProblem() { 
-            appData[currentSystemIdx].problems.push({ name: "Vấn đề mới...", weight: 1, matrix: {} }); 
-            renderMatrix(); 
-            renderConfig();
+        // --- EXPORT LOGIC ---
+        function exportRealExcel() {
+            if (!confirm("Xuất file Excel với dữ liệu hiện tại?")) return;
+
+            const ws_data = [];
+            const headers = ["STT", "Hệ thống / Vấn đề lâm sàng", ...clos.map(c => c.id), "Tổng"];
+            ws_data.push(headers);
+
+            let grandTotal = 0;
+            const colTotals = new Array(clos.length).fill(0);
+
+            appData.forEach((sys, sIdx) => {
+                const sysRow = [`${sIdx + 1}`, sys.name.toUpperCase()];
+                for(let i=0; i<clos.length; i++) sysRow.push("");
+                sysRow.push(0); 
+                
+                const sysRowIdx = ws_data.push(sysRow) - 1;
+                let sysSum = 0;
+
+                sys.problems.forEach((prob, pIdx) => {
+                    const row = [`${sIdx + 1}.${pIdx + 1}`, prob.name];
+                    let rowSum = 0;
+
+                    clos.forEach((clo, cIdx) => {
+                        const cell = prob.matrix[clo.id];
+                        if (cell && cell.q > 0) {
+                            row.push(cell.q);
+                            rowSum += parseInt(cell.q);
+                            colTotals[cIdx] += parseInt(cell.q);
+                        } else {
+                            row.push("");
+                        }
+                    });
+
+                    row.push(rowSum);
+                    sysSum += rowSum;
+                    ws_data.push(row);
+                });
+
+                ws_data[sysRowIdx][ws_data[sysRowIdx].length - 1] = sysSum;
+                grandTotal += sysSum;
+            });
+
+            const footer = ["", "TỔNG CỘNG", ...colTotals, grandTotal];
+            ws_data.push(footer);
+
+            const info_data = [];
+            info_data.push(["THÔNG SỐ CẤU HÌNH & THỐNG KÊ", ""]);
+            info_data.push(["Tổng số câu hỏi:", grandTotal]);
+            info_data.push(["", ""]);
+            info_data.push(["MỤC TIÊU BLOOM (Target)", "%"]);
+            Object.entries(configTarget.bloom).forEach(([k, v]) => info_data.push([`Mức ${k}`, v]));
+            info_data.push(["", ""]);
+            info_data.push(["MỤC TIÊU CLO (Target)", "%"]);
+            clos.forEach(c => info_data.push([c.id, configTarget.clo[c.id]]));
+
+            const wb = XLSX.utils.book_new();
+            
+            const ws1 = XLSX.utils.aoa_to_sheet(ws_data);
+            ws1['!cols'] = [{wch: 6}, {wch: 50}, ...clos.map(()=>({wch: 10})), {wch: 8}];
+            XLSX.utils.book_append_sheet(wb, ws1, "Ma trận");
+
+            const ws2 = XLSX.utils.aoa_to_sheet(info_data);
+            ws2['!cols'] = [{wch: 30}, {wch: 10}];
+            XLSX.utils.book_append_sheet(wb, ws2, "Cấu hình");
+
+            XLSX.writeFile(wb, "Matrix_Blueprint_Export.xlsx");
         }
+
+        function downloadTemplate() {
+            const assetLink = "assets/form test blueprint - trong so 5.2.2026.xlsx";
+            const link = document.createElement('a');
+            link.href = assetLink;
+            link.download = 'Template_Form.xlsx';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
         function addCLO() {
             const id = prompt("Nhập mã CLO mới:");
             if(id) { 
@@ -1156,16 +1361,6 @@
             }
         }
         function updateGlobalStats() { document.getElementById('totalQuestionsDisplay').innerText = calculateActualStats().total; }
-
-        function exportExcel() {
-            const assetLink = "assets/form test blueprint - trong so 5.2.2026.xlsx";
-            const link = document.createElement('a');
-            link.href = assetLink;
-            link.download = 'Matrix_Blueprint_Auto.xlsx';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
 
         document.addEventListener('click', (e) => {
             const editor = document.getElementById('cellEditor');
