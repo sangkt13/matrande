@@ -1,1 +1,8 @@
-
+{
+  "name": "matrix-builder-pro-2026",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "openai": "^4.0.0"
+  }
+}
