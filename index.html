@@ -1,1405 +1,1615 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Matrix Blueprint 2026 - Auto Gen AI</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- SheetJS for Real Excel Export -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <style>
-        :root {
-            --primary: #2563EB;
-            --bg-body: #F8FAFC;
-            --border-color: #E2E8F0;
-            /* Bloom Colors */
-            --bloom-1: #FEE2E2; /* Remembering - Red */
-            --bloom-2: #FFEDD5; /* Understanding - Orange */
-            --bloom-3: #FEF9C3; /* Applying - Yellow */
-            --bloom-4: #DCFCE7; /* Analyzing - Green */
-            --bloom-5: #DBEAFE; /* Evaluating - Blue */
-            --bloom-6: #F3E8FF; /* Creating - Purple */
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matrix Blueprint 2026 - Auto Gen AI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- SheetJS for Real Excel Export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-body);
-            color: #1E293B;
-            height: 100vh;
-            overflow: hidden;
-            font-size: 13px;
-        }
+  <style>
+    :root {
+      --primary: #2563EB;
+      --bg-body: #F8FAFC;
+      --border-color: #E2E8F0;
 
-        /* --- Scrollbar --- */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+      /* Bloom Colors */
+      --bloom-1: #FEE2E2; /* Remembering - Red */
+      --bloom-2: #FFEDD5; /* Understanding - Orange */
+      --bloom-3: #FEF9C3; /* Applying - Yellow */
+      --bloom-4: #DCFCE7; /* Analyzing - Green */
+      --bloom-5: #DBEAFE; /* Evaluating - Blue */
+      --bloom-6: #F3E8FF; /* Creating - Purple */
+    }
 
-        /* --- Navigation --- */
-        .nav-item { cursor: pointer; transition: all 0.2s ease; border-bottom: 2px solid transparent; }
-        .nav-item:hover { color: var(--primary); background-color: #EFF6FF; }
-        .nav-item.active {
-            color: var(--primary);
-            border-bottom-color: var(--primary);
-            background-color: #EFF6FF;
-            font-weight: 600;
-        }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-body);
+      color: #1E293B;
+      height: 100vh;
+      overflow: hidden;
+      font-size: 13px;
+    }
 
-        /* --- Sidebar --- */
-        .sidebar-item {
-            border-radius: 6px;
-            transition: all 0.2s;
-            cursor: pointer;
-            border-left: 3px solid transparent;
-            position: relative;
-        }
-        .sidebar-item:hover { background-color: #F1F5F9; }
-        .sidebar-item.active {
-            background-color: #EFF6FF;
-            color: #1D4ED8;
-            border-left-color: #2563EB;
-            font-weight: 600;
-        }
+    /* --- Scrollbar --- */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
 
-        .sidebar-actions { display: none; }
-        .sidebar-item:hover .sidebar-actions { display: flex; }
+    /* --- Navigation --- */
+    .nav-item { cursor: pointer; transition: all 0.2s ease; border-bottom: 2px solid transparent; }
+    .nav-item:hover { color: var(--primary); background-color: #EFF6FF; }
+    .nav-item.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+      background-color: #EFF6FF;
+      font-weight: 600;
+    }
 
-        /* --- Matrix Table --- */
-        .matrix-container {
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            background: white;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
+    /* --- Sidebar --- */
+    .sidebar-item {
+      border-radius: 6px;
+      transition: all 0.2s;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      position: relative;
+    }
+    .sidebar-item:hover { background-color: #F1F5F9; }
+    .sidebar-item.active {
+      background-color: #EFF6FF;
+      color: #1D4ED8;
+      border-left-color: #2563EB;
+      font-weight: 600;
+    }
 
-        .matrix-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+    .sidebar-actions { display: none; }
+    .sidebar-item:hover .sidebar-actions { display: flex; }
 
-        .matrix-table th {
-            background-color: #F8FAFC;
-            color: #475569;
-            font-weight: 600;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            padding: 8px;
-            border-bottom: 1px solid var(--border-color);
-            border-right: 1px solid var(--border-color);
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            text-align: center;
-        }
-        .matrix-table th.corner-header {
-            left: 0;
-            z-index: 20;
-            background-color: #F1F5F9;
-            text-align: left;
-            min-width: 400px;
-        }
+    /* --- Matrix Table --- */
+    .matrix-container {
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: white;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
 
-        .matrix-table td {
-            border-bottom: 1px solid var(--border-color);
-            border-right: 1px solid var(--border-color);
-            padding: 0;
-            height: 44px;
-            position: relative;
-        }
+    .matrix-table { width: 100%; border-collapse: separate; border-spacing: 0; }
 
-        .matrix-table td.row-header {
-            padding: 0 10px;
-            position: sticky;
-            left: 0;
-            background: #fff;
-            z-index: 5;
-            font-weight: 500;
-            white-space: normal;
-            line-height: 1.3;
-            max-width: 400px;
-            box-shadow: 2px 0 5px -2px rgba(0,0,0,0.05);
-        }
+    .matrix-table th {
+      background-color: #F8FAFC;
+      color: #475569;
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      padding: 8px;
+      border-bottom: 1px solid var(--border-color);
+      border-right: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      text-align: center;
+    }
+    .matrix-table th.corner-header {
+      left: 0;
+      z-index: 20;
+      background-color: #F1F5F9;
+      text-align: left;
+      min-width: 400px;
+    }
 
-        .row-action-btn { opacity: 0; transition: opacity 0.2s; }
-        .matrix-table tr:hover .row-action-btn { opacity: 1; }
+    .matrix-table td {
+      border-bottom: 1px solid var(--border-color);
+      border-right: 1px solid var(--border-color);
+      padding: 0;
+      height: 44px;
+      position: relative;
+    }
 
-        .matrix-table tr.footer-row td {
-            background-color: #F1F5F9;
-            position: sticky;
-            bottom: 0;
-            z-index: 9;
-            border-top: 2px solid #CBD5E1;
-            font-weight: 700;
-            color: #1E40AF;
-        }
-        .matrix-table tr.footer-row td.row-header {
-            z-index: 15;
-            text-align: right;
-            padding-right: 15px;
-            color: #475569;
-            text-transform: uppercase;
-            font-size: 0.75rem;
-        }
+    .matrix-table td.row-header {
+      padding: 0 10px;
+      position: sticky;
+      left: 0;
+      background: #fff;
+      z-index: 5;
+      font-weight: 500;
+      white-space: normal;
+      line-height: 1.3;
+      max-width: 400px;
+      box-shadow: 2px 0 5px -2px rgba(0,0,0,0.05);
+    }
 
-        /* --- Matrix Cell --- */
-        .matrix-cell {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-weight: 800;
-            font-size: 14px;
-            transition: all 0.15s;
-        }
-        .matrix-cell:hover {
-            filter: brightness(0.95);
-            box-shadow: inset 0 0 0 2px #94A3B8;
-        }
-        .matrix-cell.empty { background: transparent; color: transparent; }
-        .matrix-cell.empty:hover { background: #F1F5F9; }
+    .row-action-btn { opacity: 0; transition: opacity 0.2s; }
+    .matrix-table tr:hover .row-action-btn { opacity: 1; }
 
-        /* Bloom Colors */
-        .bloom-1 { background-color: var(--bloom-1); color: #991B1B; }
-        .bloom-2 { background-color: var(--bloom-2); color: #9A3412; }
-        .bloom-3 { background-color: var(--bloom-3); color: #854D0E; }
-        .bloom-4 { background-color: var(--bloom-4); color: #166534; }
-        .bloom-5 { background-color: var(--bloom-5); color: #1E40AF; }
-        .bloom-6 { background-color: var(--bloom-6); color: #6B21A8; }
+    .matrix-table tr.footer-row td {
+      background-color: #F1F5F9;
+      position: sticky;
+      bottom: 0;
+      z-index: 9;
+      border-top: 2px solid #CBD5E1;
+      font-weight: 700;
+      color: #1E40AF;
+    }
+    .matrix-table tr.footer-row td.row-header {
+      z-index: 15;
+      text-align: right;
+      padding-right: 15px;
+      color: #475569;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+    }
 
-        /* Legend Dots */
-        .legend-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 4px; border: 1px solid rgba(0,0,0,0.1); }
+    /* --- Matrix Cell --- */
+    .matrix-cell {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-weight: 800;
+      font-size: 14px;
+      transition: all 0.15s;
+    }
+    .matrix-cell:hover {
+      filter: brightness(0.95);
+      box-shadow: inset 0 0 0 2px #94A3B8;
+    }
+    .matrix-cell.empty { background: transparent; color: transparent; }
+    .matrix-cell.empty:hover { background: #F1F5F9; }
 
-        /* Popover Editor */
-        #cellEditor {
-            position: fixed;
-            background: white;
-            border: 1px solid #CBD5E1;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            padding: 12px;
-            z-index: 100;
-            display: none;
-            width: 220px;
-        }
-        .bloom-selector { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin-top: 8px; }
-        .bloom-opt { height: 30px; border-radius: 4px; cursor: pointer; border: 2px solid transparent; }
-        .bloom-opt.selected { border-color: #2563EB; transform: scale(0.95); }
+    /* Bloom Colors */
+    .bloom-1 { background-color: var(--bloom-1); color: #991B1B; }
+    .bloom-2 { background-color: var(--bloom-2); color: #9A3412; }
+    .bloom-3 { background-color: var(--bloom-3); color: #854D0E; }
+    .bloom-4 { background-color: var(--bloom-4); color: #166534; }
+    .bloom-5 { background-color: var(--bloom-5); color: #1E40AF; }
+    .bloom-6 { background-color: var(--bloom-6); color: #6B21A8; }
 
-        .stat-card {
-            background: white;
-            border: 1px solid #E2E8F0;
-            border-radius: 6px;
-            padding: 4px 10px;
-            min-width: 80px;
-        }
+    /* Legend Dots */
+    .legend-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 4px; border: 1px solid rgba(0,0,0,0.1); }
 
-        /* Config Tabs */
-        .tab-btn {
-            padding: 0.5rem 1rem;
-            font-weight: 600;
-            color: #64748B;
-            border-bottom: 2px solid transparent;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .tab-btn:hover { color: #2563EB; }
-        .tab-btn.active { color: #2563EB; border-bottom-color: #2563EB; }
-        .config-input {
-            width: 60px;
-            text-align: center;
-            border: 1px solid #CBD5E1;
-            border-radius: 4px;
-            padding: 4px;
-            transition: all 0.2s;
-        }
-        .config-input:focus { border-color: #2563EB; outline: none; }
+    /* Popover Editor */
+    #cellEditor {
+      position: fixed;
+      background: white;
+      border: 1px solid #CBD5E1;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      padding: 12px;
+      z-index: 100;
+      display: none;
+      width: 220px;
+    }
+    .bloom-selector { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin-top: 8px; }
+    .bloom-opt { height: 30px; border-radius: 4px; cursor: pointer; border: 2px solid transparent; }
+    .bloom-opt.selected { border-color: #2563EB; transform: scale(0.95); }
 
-        /* New Inputs */
-        .clo-desc-input {
-            width: 100%;
-            border: 1px solid #E2E8F0;
-            border-radius: 4px;
-            padding: 8px;
-            font-size: 13px;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-        .clo-desc-input:focus { border-color: #2563EB; }
+    .stat-card {
+      background: white;
+      border: 1px solid #E2E8F0;
+      border-radius: 6px;
+      padding: 4px 10px;
+      min-width: 80px;
+    }
 
-        /* Live Monitor Bars */
-        .monitor-bar-bg { width: 100%; height: 6px; background: #F1F5F9; border-radius: 3px; overflow: hidden; margin-top: 4px; }
-        .monitor-bar-fill { height: 100%; transition: width 0.5s ease; border-radius: 3px; }
+    /* Config Tabs */
+    .tab-btn {
+      padding: 0.5rem 1rem;
+      font-weight: 600;
+      color: #64748B;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab-btn:hover { color: #2563EB; }
+    .tab-btn.active { color: #2563EB; border-bottom-color: #2563EB; }
+    .config-input {
+      width: 60px;
+      text-align: center;
+      border: 1px solid #CBD5E1;
+      border-radius: 4px;
+      padding: 4px;
+      transition: all 0.2s;
+    }
+    .config-input:focus { border-color: #2563EB; outline: none; }
 
-        .text-problem {
-            white-space: normal;
-            font-size: 12px;
-            line-height: 1.4;
-            outline: none;
-            border: 1px dashed transparent;
-            padding: 2px;
-        }
-        .text-problem:focus {
-            border-color: #94A3B8;
-            background: #F8FAFC;
-        }
+    /* New Inputs */
+    .clo-desc-input {
+      width: 100%;
+      border: 1px solid #E2E8F0;
+      border-radius: 4px;
+      padding: 8px;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .clo-desc-input:focus { border-color: #2563EB; }
 
-        /* Export Menu */
-        .export-group { position: relative; }
-        .export-dropdown {
-            position: absolute;
-            right: 0;
-            top: 100%;
-            margin-top: 5px;
-            background: white;
-            border: 1px solid #E2E8F0;
-            border-radius: 6px;
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
-            display: none;
-            min-width: 200px;
-            z-index: 50;
-        }
-        .export-group:hover .export-dropdown { display: block; }
-        .export-item {
-            display: block;
-            padding: 8px 12px;
-            font-size: 13px;
-            color: #334155;
-            cursor: pointer;
-        }
-        .export-item:hover { background-color: #F1F5F9; color: #0F172A; }
+    /* Live Monitor Bars */
+    .monitor-bar-bg { width: 100%; height: 6px; background: #F1F5F9; border-radius: 3px; overflow: hidden; margin-top: 4px; }
+    .monitor-bar-fill { height: 100%; transition: width 0.5s ease; border-radius: 3px; }
 
-        /* Cloud status */
-        .cloud-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 4px 10px;
-            border: 1px solid #E2E8F0;
-            border-radius: 999px;
-            font-size: 12px;
-            background: #fff;
-        }
-    </style>
+    .text-problem {
+      white-space: normal;
+      font-size: 12px;
+      line-height: 1.4;
+      outline: none;
+      border: 1px dashed transparent;
+      padding: 2px;
+    }
+    .text-problem:focus {
+      border-color: #94A3B8;
+      background: #F8FAFC;
+    }
+
+    /* Export Menu */
+    .export-group { position: relative; }
+    .export-dropdown {
+      position: absolute;
+      right: 0;
+      top: 100%;
+      margin-top: 5px;
+      background: white;
+      border: 1px solid #E2E8F0;
+      border-radius: 6px;
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+      display: none;
+      min-width: 200px;
+      z-index: 50;
+    }
+    .export-group:hover .export-dropdown { display: block; }
+    .export-item {
+      display: block;
+      padding: 8px 12px;
+      font-size: 13px;
+      color: #334155;
+      cursor: pointer;
+    }
+    .export-item:hover { background-color: #F1F5F9; color: #0F172A; }
+
+    /* Cloud status */
+    .cloud-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border: 1px solid #E2E8F0;
+      border-radius: 999px;
+      font-size: 12px;
+      background: #fff;
+    }
+
+    /* --- Problem Quick Editor (Sidebar) --- */
+    #problemEditor {
+      position: fixed;
+      background: white;
+      border: 1px solid #CBD5E1;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      padding: 12px;
+      z-index: 120;
+      display: none;
+      width: 320px;
+    }
+    .problem-chip {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #F1F5F9;
+      color: #475569;
+      border: 1px solid #E2E8F0;
+    }
+  </style>
 </head>
+
 <body class="flex flex-col">
 
-    <!-- HEADER -->
-    <header class="h-14 bg-white border-b border-slate-200 flex items-center justify-between px-4 z-30 shadow-sm flex-none">
-        <div class="flex items-center gap-6">
-            <div class="flex items-center text-blue-700">
-                <i class="fa-solid fa-layer-group text-xl mr-2"></i>
+  <!-- HEADER -->
+  <header class="h-14 bg-white border-b border-slate-200 flex items-center justify-between px-4 z-30 shadow-sm flex-none">
+    <div class="flex items-center gap-6">
+      <div class="flex items-center text-blue-700">
+        <i class="fa-solid fa-layer-group text-xl mr-2"></i>
+        <div>
+          <h1 class="font-bold text-base leading-tight text-slate-800">Matrix<span class="text-blue-600">Builder</span>
+            <span class="text-xs font-normal text-slate-500">PRO - 2026</span>
+          </h1>
+        </div>
+      </div>
+
+      <!-- Legend -->
+      <div class="flex items-center gap-3 text-xs bg-slate-50 px-3 py-1.5 rounded-full border border-slate-100 hidden md:flex">
+        <span class="font-bold text-slate-400 mr-1">BLOOM:</span>
+        <div class="flex items-center" title="1. Ghi nhớ"><span class="legend-dot bloom-1"></span>L1</div>
+        <div class="flex items-center" title="2. Hiểu"><span class="legend-dot bloom-2"></span>L2</div>
+        <div class="flex items-center" title="3. Áp dụng"><span class="legend-dot bloom-3"></span>L3</div>
+        <div class="flex items-center" title="4. Phân tích"><span class="legend-dot bloom-4"></span>L4</div>
+        <div class="flex items-center" title="5. Đánh giá"><span class="legend-dot bloom-5"></span>L5</div>
+        <div class="flex items-center" title="6. Sáng tạo"><span class="legend-dot bloom-6"></span>L6</div>
+      </div>
+
+      <!-- Cloud indicator -->
+      <div class="cloud-pill hidden lg:inline-flex" title="Lưu/Tải state trên Vercel Blob">
+        <i class="fa-solid fa-cloud text-slate-500"></i>
+        <span class="text-slate-600 font-semibold">Cloud:</span>
+        <span id="cloudStatus" class="text-slate-500">chưa tải</span>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <div class="stat-card">
+        <div class="text-[10px] text-slate-500 font-bold uppercase">Tổng câu</div>
+        <div class="text-lg font-bold text-slate-800" id="totalQuestionsDisplay">0</div>
+      </div>
+
+      <!-- CLOUD BUTTONS -->
+      <button onclick="saveToCloud()" class="bg-slate-800 hover:bg-slate-900 text-white px-3 py-1.5 rounded text-sm font-medium flex items-center gap-2 transition-colors">
+        <i class="fa-solid fa-cloud-arrow-up"></i> Lưu cloud
+      </button>
+      <button onclick="loadFromCloud()" class="bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 px-3 py-1.5 rounded text-sm font-medium flex items-center gap-2 transition-colors">
+        <i class="fa-solid fa-cloud-arrow-down"></i> Tải cloud
+      </button>
+
+      <div class="export-group">
+        <button class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded text-sm font-medium flex items-center gap-2 transition-colors">
+          <i class="fa-solid fa-file-excel"></i> Xuất Excel <i class="fa-solid fa-chevron-down text-[10px]"></i>
+        </button>
+        <div class="export-dropdown">
+          <div onclick="exportRealExcel()" class="export-item font-bold border-b border-slate-100">
+            <i class="fa-solid fa-table mr-2 text-emerald-600"></i> Xuất Ma trận hiện tại
+          </div>
+          <div onclick="downloadTemplate()" class="export-item text-slate-500">
+            <i class="fa-solid fa-file-arrow-down mr-2"></i> Tải Form mẫu gốc
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <div class="flex flex-1 overflow-hidden relative">
+
+    <!-- SIDEBAR -->
+    <aside class="w-72 bg-white border-r border-slate-200 flex flex-col z-20">
+      <div class="p-3 border-b border-slate-100 bg-slate-50 font-bold text-xs text-slate-500 uppercase flex justify-between">
+        <span>Hệ thống cơ quan</span>
+        <i class="fa-solid fa-list"></i>
+      </div>
+      <div class="flex-1 overflow-y-auto p-2 space-y-1" id="sidebarList"></div>
+      <div class="p-3 border-t border-slate-200 flex flex-col gap-2">
+        <button onclick="addSystem()" class="w-full py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 rounded text-xs font-bold transition-colors">
+          <i class="fa-solid fa-folder-plus mr-1"></i> Thêm Hệ Thống
+        </button>
+        <button onclick="addCLO()" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded text-xs font-bold transition-colors">
+          <i class="fa-solid fa-plus mr-1"></i> Thêm CLO (Cột)
+        </button>
+      </div>
+    </aside>
+
+    <!-- WORKSPACE -->
+    <main class="flex-1 flex flex-col bg-slate-50 overflow-hidden">
+      <!-- Tabs & Toolbar -->
+      <div class="h-12 bg-white border-b border-slate-200 flex items-center justify-between px-4 flex-none">
+        <div class="flex gap-4 h-full">
+          <button onclick="switchTab('matrix')" id="tab-matrix" class="tab-btn active">
+            <i class="fa-solid fa-table mr-1"></i> Ma trận
+          </button>
+          <button onclick="switchTab('clo-info')" id="tab-clo-info" class="tab-btn">
+            <i class="fa-solid fa-circle-info mr-1"></i> Thông tin CLO
+          </button>
+          <button onclick="switchTab('config')" id="tab-config" class="tab-btn">
+            <i class="fa-solid fa-sliders mr-1"></i> Cấu hình & Tạo tự động
+          </button>
+        </div>
+        <div class="text-xs text-slate-400 italic" id="matrixHint">
+          * Bấm vào tên để sửa. Chọn ô để nhập điểm.
+        </div>
+      </div>
+
+      <!-- CONTENT VIEWS -->
+      <div class="flex-1 overflow-hidden relative">
+
+        <!-- VIEW 1: MATRIX -->
+        <div id="view-matrix" class="h-full flex flex-col p-4 view-section">
+          <div class="mb-2 flex items-center">
+            <h2 id="currentSystemTitle" class="font-bold text-slate-700 text-lg mr-3">Chọn hệ thống...</h2>
+            <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-medium">Đang chỉnh sửa</span>
+          </div>
+
+          <div class="matrix-container flex-1">
+            <div class="overflow-auto h-full relative">
+              <table class="matrix-table" id="mainMatrix">
+                <thead id="matrixHead"></thead>
+                <tbody id="matrixBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- VIEW 2: CLO INFO -->
+        <div id="view-clo-info" class="h-full p-8 overflow-y-auto hidden view-section">
+          <div class="max-w-4xl mx-auto bg-white rounded-lg border border-slate-200 shadow-sm p-6">
+            <h3 class="font-bold text-slate-800 text-lg mb-4 flex items-center">
+              <span class="w-8 h-8 rounded bg-indigo-100 text-indigo-600 flex items-center justify-center mr-2">
+                <i class="fa-solid fa-book-open"></i>
+              </span>
+              Định nghĩa Chuẩn đầu ra (CLOs)
+            </h3>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm text-left">
+                <thead class="text-xs text-slate-500 uppercase bg-slate-50 border-b">
+                <tr>
+                  <th class="px-4 py-3 w-24">Mã CLO</th>
+                  <th class="px-4 py-3 w-48">Tên ngắn</th>
+                  <th class="px-4 py-3">Mô tả chi tiết / Định nghĩa</th>
+                </tr>
+                </thead>
+                <tbody id="cloInfoBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- VIEW 3: CONFIG & AUTO GEN -->
+        <div id="view-config" class="h-full p-6 overflow-y-auto hidden view-section">
+          <div class="max-w-7xl mx-auto">
+
+            <!-- Generator Panel -->
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 rounded-lg p-5 mb-6 flex items-center justify-between shadow-sm">
+              <div>
+                <h3 class="font-bold text-blue-800 text-lg mb-1"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i>Tạo Ma Trận Tự Động (AI Distribution)</h3>
+                <p class="text-sm text-blue-600 opacity-80">Hệ thống sẽ rải câu hỏi dựa trên <b>Tỉ trọng %</b> của các Hệ thống & Vấn đề đã cấu hình.</p>
+              </div>
+              <div class="flex items-end gap-4">
                 <div>
-                    <h1 class="font-bold text-base leading-tight text-slate-800">Matrix<span class="text-blue-600">Builder</span> <span class="text-xs font-normal text-slate-500">PRO - 2026</span></h1>
+                  <label class="block text-xs font-bold text-blue-700 mb-1 uppercase">Tổng số câu hỏi</label>
+                  <input type="number" id="autoTotalQ" value="110" class="w-32 text-center text-lg font-bold border-2 border-blue-200 rounded px-2 py-1 text-blue-800 focus:border-blue-500 outline-none">
                 </div>
-            </div>
-
-            <!-- Legend -->
-            <div class="flex items-center gap-3 text-xs bg-slate-50 px-3 py-1.5 rounded-full border border-slate-100 hidden md:flex">
-                <span class="font-bold text-slate-400 mr-1">BLOOM:</span>
-                <div class="flex items-center" title="1. Ghi nhớ"><span class="legend-dot bloom-1"></span>L1</div>
-                <div class="flex items-center" title="2. Hiểu"><span class="legend-dot bloom-2"></span>L2</div>
-                <div class="flex items-center" title="3. Áp dụng"><span class="legend-dot bloom-3"></span>L3</div>
-                <div class="flex items-center" title="4. Phân tích"><span class="legend-dot bloom-4"></span>L4</div>
-                <div class="flex items-center" title="5. Đánh giá"><span class="legend-dot bloom-5"></span>L5</div>
-                <div class="flex items-center" title="6. Sáng tạo"><span class="legend-dot bloom-6"></span>L6</div>
-            </div>
-
-            <!-- Cloud indicator -->
-            <div class="cloud-pill hidden lg:inline-flex" title="Lưu/Tải state trên Vercel Blob">
-                <i class="fa-solid fa-cloud text-slate-500"></i>
-                <span class="text-slate-600 font-semibold">Cloud:</span>
-                <span id="cloudStatus" class="text-slate-500">chưa tải</span>
-            </div>
-        </div>
-
-        <div class="flex items-center gap-3">
-            <div class="stat-card">
-                <div class="text-[10px] text-slate-500 font-bold uppercase">Tổng câu</div>
-                <div class="text-lg font-bold text-slate-800" id="totalQuestionsDisplay">0</div>
-            </div>
-
-            <!-- CLOUD BUTTONS -->
-            <button onclick="saveToCloud()" class="bg-slate-800 hover:bg-slate-900 text-white px-3 py-1.5 rounded text-sm font-medium flex items-center gap-2 transition-colors">
-                <i class="fa-solid fa-cloud-arrow-up"></i> Lưu cloud
-            </button>
-            <button onclick="loadFromCloud()" class="bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 px-3 py-1.5 rounded text-sm font-medium flex items-center gap-2 transition-colors">
-                <i class="fa-solid fa-cloud-arrow-down"></i> Tải cloud
-            </button>
-
-            <div class="export-group">
-                <button class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded text-sm font-medium flex items-center gap-2 transition-colors">
-                    <i class="fa-solid fa-file-excel"></i> Xuất Excel <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                <button onclick="runAutoGenerator()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded shadow font-bold transition-all transform hover:scale-105">
+                  <i class="fa-solid fa-play mr-2"></i> BẮT ĐẦU TẠO
                 </button>
-                <div class="export-dropdown">
-                    <div onclick="exportRealExcel()" class="export-item font-bold border-b border-slate-100">
-                        <i class="fa-solid fa-table mr-2 text-emerald-600"></i> Xuất Ma trận hiện tại
-                    </div>
-                    <div onclick="downloadTemplate()" class="export-item text-slate-500">
-                        <i class="fa-solid fa-file-arrow-down mr-2"></i> Tải Form mẫu gốc
-                    </div>
-                </div>
+              </div>
             </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+              <!-- COL 1 -->
+              <div class="lg:col-span-6 space-y-6">
+                <div class="bg-white rounded-lg border border-slate-200 shadow-sm p-5">
+                  <h3 class="font-bold text-slate-800 text-base mb-4 flex items-center justify-between">
+                    <div class="flex items-center">
+                      <span class="w-7 h-7 rounded bg-orange-100 text-orange-600 flex items-center justify-center mr-2">
+                        <i class="fa-solid fa-weight-scale"></i>
+                      </span>
+                      Tỉ trọng Hệ Thống & Vấn đề
+                    </div>
+                    <span class="text-xs font-normal text-slate-400">(Nhập tỉ trọng % hệ thống)</span>
+                  </h3>
+
+                  <div class="mb-4">
+                    <label class="text-xs font-bold text-slate-500 uppercase mb-1 block">Chọn hệ thống để cấu hình:</label>
+                    <select id="configSystemSelect" onchange="changeConfigSystem(this.value)" class="w-full p-2 border border-slate-300 rounded text-sm font-semibold text-slate-700"></select>
+                  </div>
+
+                  <div class="p-3 bg-slate-50 border border-slate-200 rounded mb-4">
+                    <div class="flex justify-between items-center">
+                      <span class="text-sm font-bold text-slate-700">Tỉ trọng Hệ thống (%):</span>
+                      <div class="flex items-center gap-2">
+                        <input type="number" id="systemWeightInput" onchange="updateSystemWeight(this.value)" class="config-input w-24 font-bold text-blue-700" step="0.01" placeholder="%">
+                        <span class="text-xs text-slate-500 font-bold">%</span>
+                      </div>
+                    </div>
+                    <div class="mt-2">
+                      <div class="flex justify-between text-[10px] text-slate-500 mb-1">
+                        <span>Tỉ lệ câu hỏi thực tế (toàn bài):</span>
+                        <span id="systemActualPercent">0%</span>
+                      </div>
+                      <div class="monitor-bar-bg">
+                        <div id="systemActualBar" class="monitor-bar-fill bg-blue-500" style="width: 0%"></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="space-y-4 max-h-[400px] overflow-y-auto pr-2" id="problemWeightList"></div>
+                </div>
+              </div>
+
+              <!-- COL 2 -->
+              <div class="lg:col-span-6 space-y-6">
+
+                <div class="bg-white rounded-lg border border-slate-200 shadow-sm p-5">
+                  <h3 class="font-bold text-slate-800 text-base mb-4 flex items-center">
+                    <span class="w-7 h-7 rounded bg-purple-100 text-purple-600 flex items-center justify-center mr-2">
+                      <i class="fa-solid fa-brain"></i>
+                    </span>
+                    Mục tiêu Bloom (Toàn bài)
+                  </h3>
+                  <div class="grid grid-cols-2 gap-4" id="bloomConfigList"></div>
+                  <div class="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center">
+                    <span class="font-bold text-slate-600 text-xs uppercase">Tổng Bloom Target:</span>
+                    <span class="font-bold text-base" id="bloomTotalSum">0%</span>
+                  </div>
+                </div>
+
+                <div class="bg-white rounded-lg border border-slate-200 shadow-sm p-5">
+                  <h3 class="font-bold text-slate-800 text-base mb-4 flex items-center">
+                    <span class="w-7 h-7 rounded bg-emerald-100 text-emerald-600 flex items-center justify-center mr-2">
+                      <i class="fa-solid fa-bullseye"></i>
+                    </span>
+                    Mục tiêu CLO (Toàn bài)
+                  </h3>
+                  <div class="space-y-4" id="cloConfigList"></div>
+                  <div class="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center">
+                    <span class="font-bold text-slate-600 text-xs uppercase">Tổng CLO Target:</span>
+                    <span class="font-bold text-base" id="cloTotalSum">0%</span>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
         </div>
-    </header>
 
-    <!-- MAIN -->
-    <div class="flex flex-1 overflow-hidden relative">
+      </div>
+    </main>
+  </div>
 
-        <!-- SIDEBAR -->
-        <aside class="w-72 bg-white border-r border-slate-200 flex flex-col z-20">
-            <div class="p-3 border-b border-slate-100 bg-slate-50 font-bold text-xs text-slate-500 uppercase flex justify-between">
-                <span>Hệ thống cơ quan</span>
-                <i class="fa-solid fa-list"></i>
-            </div>
-            <div class="flex-1 overflow-y-auto p-2 space-y-1" id="sidebarList"></div>
-            <div class="p-3 border-t border-slate-200 flex flex-col gap-2">
-                 <button onclick="addSystem()" class="w-full py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 rounded text-xs font-bold transition-colors">
-                    <i class="fa-solid fa-folder-plus mr-1"></i> Thêm Hệ Thống
-                 </button>
-                 <button onclick="addCLO()" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded text-xs font-bold transition-colors">
-                    <i class="fa-solid fa-plus mr-1"></i> Thêm CLO (Cột)
-                 </button>
-            </div>
-        </aside>
-
-        <!-- WORKSPACE -->
-        <main class="flex-1 flex flex-col bg-slate-50 overflow-hidden">
-            <!-- Tabs & Toolbar -->
-            <div class="h-12 bg-white border-b border-slate-200 flex items-center justify-between px-4 flex-none">
-                <div class="flex gap-4 h-full">
-                    <button onclick="switchTab('matrix')" id="tab-matrix" class="tab-btn active">
-                        <i class="fa-solid fa-table mr-1"></i> Ma trận
-                    </button>
-                    <button onclick="switchTab('clo-info')" id="tab-clo-info" class="tab-btn">
-                        <i class="fa-solid fa-circle-info mr-1"></i> Thông tin CLO
-                    </button>
-                    <button onclick="switchTab('config')" id="tab-config" class="tab-btn">
-                        <i class="fa-solid fa-sliders mr-1"></i> Cấu hình & Tạo tự động
-                    </button>
-                </div>
-                <div class="text-xs text-slate-400 italic" id="matrixHint">
-                    * Bấm vào tên để sửa. Chọn ô để nhập điểm.
-                </div>
-            </div>
-
-            <!-- CONTENT VIEWS -->
-            <div class="flex-1 overflow-hidden relative">
-
-                <!-- VIEW 1: MATRIX -->
-                <div id="view-matrix" class="h-full flex flex-col p-4 view-section">
-                     <div class="mb-2 flex items-center">
-                        <h2 id="currentSystemTitle" class="font-bold text-slate-700 text-lg mr-3">Chọn hệ thống...</h2>
-                        <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-medium">Đang chỉnh sửa</span>
-                     </div>
-                     <div class="matrix-container flex-1">
-                        <div class="overflow-auto h-full relative">
-                            <table class="matrix-table" id="mainMatrix">
-                                <thead id="matrixHead"></thead>
-                                <tbody id="matrixBody"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- VIEW 2: CLO INFO -->
-                <div id="view-clo-info" class="h-full p-8 overflow-y-auto hidden view-section">
-                    <div class="max-w-4xl mx-auto bg-white rounded-lg border border-slate-200 shadow-sm p-6">
-                        <h3 class="font-bold text-slate-800 text-lg mb-4 flex items-center">
-                            <span class="w-8 h-8 rounded bg-indigo-100 text-indigo-600 flex items-center justify-center mr-2">
-                                <i class="fa-solid fa-book-open"></i>
-                            </span>
-                            Định nghĩa Chuẩn đầu ra (CLOs)
-                        </h3>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm text-left">
-                                <thead class="text-xs text-slate-500 uppercase bg-slate-50 border-b">
-                                    <tr>
-                                        <th class="px-4 py-3 w-24">Mã CLO</th>
-                                        <th class="px-4 py-3 w-48">Tên ngắn</th>
-                                        <th class="px-4 py-3">Mô tả chi tiết / Định nghĩa</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="cloInfoBody"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- VIEW 3: CONFIG & AUTO GEN -->
-                <div id="view-config" class="h-full p-6 overflow-y-auto hidden view-section">
-                    <div class="max-w-7xl mx-auto">
-
-                        <!-- Generator Panel -->
-                        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 rounded-lg p-5 mb-6 flex items-center justify-between shadow-sm">
-                            <div>
-                                <h3 class="font-bold text-blue-800 text-lg mb-1"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i>Tạo Ma Trận Tự Động (AI Distribution)</h3>
-                                <p class="text-sm text-blue-600 opacity-80">Hệ thống sẽ rải câu hỏi dựa trên <b>Tỉ trọng %</b> của các Hệ thống & Vấn đề đã cấu hình.</p>
-                            </div>
-                            <div class="flex items-end gap-4">
-                                <div>
-                                    <label class="block text-xs font-bold text-blue-700 mb-1 uppercase">Tổng số câu hỏi</label>
-                                    <input type="number" id="autoTotalQ" value="110" class="w-32 text-center text-lg font-bold border-2 border-blue-200 rounded px-2 py-1 text-blue-800 focus:border-blue-500 outline-none">
-                                </div>
-                                <button onclick="runAutoGenerator()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded shadow font-bold transition-all transform hover:scale-105">
-                                    <i class="fa-solid fa-play mr-2"></i> BẮT ĐẦU TẠO
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-                            <!-- COL 1 -->
-                            <div class="lg:col-span-6 space-y-6">
-                                <div class="bg-white rounded-lg border border-slate-200 shadow-sm p-5">
-                                    <h3 class="font-bold text-slate-800 text-base mb-4 flex items-center justify-between">
-                                        <div class="flex items-center">
-                                            <span class="w-7 h-7 rounded bg-orange-100 text-orange-600 flex items-center justify-center mr-2">
-                                                <i class="fa-solid fa-weight-scale"></i>
-                                            </span>
-                                            Tỉ trọng Hệ Thống & Vấn đề
-                                        </div>
-                                        <span class="text-xs font-normal text-slate-400">(Nhập tỉ trọng % hệ thống)</span>
-                                    </h3>
-
-                                    <div class="mb-4">
-                                        <label class="text-xs font-bold text-slate-500 uppercase mb-1 block">Chọn hệ thống để cấu hình:</label>
-                                        <select id="configSystemSelect" onchange="changeConfigSystem(this.value)" class="w-full p-2 border border-slate-300 rounded text-sm font-semibold text-slate-700"></select>
-                                    </div>
-
-                                    <div class="p-3 bg-slate-50 border border-slate-200 rounded mb-4">
-                                        <div class="flex justify-between items-center">
-                                            <span class="text-sm font-bold text-slate-700">Tỉ trọng Hệ thống (%):</span>
-                                            <div class="flex items-center gap-2">
-                                                <input type="number" id="systemWeightInput" onchange="updateSystemWeight(this.value)" class="config-input w-24 font-bold text-blue-700" step="0.01" placeholder="%">
-                                                <span class="text-xs text-slate-500 font-bold">%</span>
-                                            </div>
-                                        </div>
-                                        <div class="mt-2">
-                                            <div class="flex justify-between text-[10px] text-slate-500 mb-1">
-                                                <span>Tỉ lệ câu hỏi thực tế (toàn bài):</span>
-                                                <span id="systemActualPercent">0%</span>
-                                            </div>
-                                            <div class="monitor-bar-bg">
-                                                <div id="systemActualBar" class="monitor-bar-fill bg-blue-500" style="width: 0%"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="space-y-4 max-h-[400px] overflow-y-auto pr-2" id="problemWeightList"></div>
-                                </div>
-                            </div>
-
-                            <!-- COL 2 -->
-                            <div class="lg:col-span-6 space-y-6">
-
-                                <div class="bg-white rounded-lg border border-slate-200 shadow-sm p-5">
-                                    <h3 class="font-bold text-slate-800 text-base mb-4 flex items-center">
-                                        <span class="w-7 h-7 rounded bg-purple-100 text-purple-600 flex items-center justify-center mr-2">
-                                            <i class="fa-solid fa-brain"></i>
-                                        </span>
-                                        Mục tiêu Bloom (Toàn bài)
-                                    </h3>
-                                    <div class="grid grid-cols-2 gap-4" id="bloomConfigList"></div>
-                                    <div class="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center">
-                                        <span class="font-bold text-slate-600 text-xs uppercase">Tổng Bloom Target:</span>
-                                        <span class="font-bold text-base" id="bloomTotalSum">0%</span>
-                                    </div>
-                                </div>
-
-                                <div class="bg-white rounded-lg border border-slate-200 shadow-sm p-5">
-                                    <h3 class="font-bold text-slate-800 text-base mb-4 flex items-center">
-                                        <span class="w-7 h-7 rounded bg-emerald-100 text-emerald-600 flex items-center justify-center mr-2">
-                                            <i class="fa-solid fa-bullseye"></i>
-                                        </span>
-                                        Mục tiêu CLO (Toàn bài)
-                                    </h3>
-                                    <div class="space-y-4" id="cloConfigList"></div>
-                                    <div class="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center">
-                                        <span class="font-bold text-slate-600 text-xs uppercase">Tổng CLO Target:</span>
-                                        <span class="font-bold text-base" id="cloTotalSum">0%</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </main>
-
+  <!-- CELL EDITOR POPUP -->
+  <div id="cellEditor">
+    <div class="flex justify-between items-center mb-2">
+      <span class="text-xs font-bold text-slate-500 uppercase">Cấu hình ô</span>
+      <button onclick="closeEditor()" class="text-slate-400 hover:text-red-500"><i class="fa-solid fa-times"></i></button>
     </div>
 
-    <!-- CELL EDITOR POPUP -->
-    <div id="cellEditor">
-        <div class="flex justify-between items-center mb-2">
-            <span class="text-xs font-bold text-slate-500 uppercase">Cấu hình ô</span>
-            <button onclick="closeEditor()" class="text-slate-400 hover:text-red-500"><i class="fa-solid fa-times"></i></button>
-        </div>
-
-        <div class="mb-3">
-            <label class="text-xs block text-slate-600 mb-1">Số lượng câu hỏi:</label>
-            <input type="number" id="editorQ" class="w-full border border-slate-300 rounded px-2 py-1 text-sm font-bold text-center focus:border-blue-500 outline-none" min="0">
-        </div>
-
-        <div class="mb-3">
-            <label class="text-xs block text-slate-600 mb-1">Mức độ Bloom:</label>
-            <div class="bloom-selector">
-                <div onclick="selectBloom(1)" class="bloom-opt bloom-1 flex items-center justify-center text-[10px] font-bold" id="b-opt-1" title="Ghi nhớ">L1</div>
-                <div onclick="selectBloom(2)" class="bloom-opt bloom-2 flex items-center justify-center text-[10px] font-bold" id="b-opt-2" title="Hiểu">L2</div>
-                <div onclick="selectBloom(3)" class="bloom-opt bloom-3 flex items-center justify-center text-[10px] font-bold" id="b-opt-3" title="Áp dụng">L3</div>
-                <div onclick="selectBloom(4)" class="bloom-opt bloom-4 flex items-center justify-center text-[10px] font-bold" id="b-opt-4" title="Phân tích">L4</div>
-                <div onclick="selectBloom(5)" class="bloom-opt bloom-5 flex items-center justify-center text-[10px] font-bold" id="b-opt-5" title="Đánh giá">L5</div>
-                <div onclick="selectBloom(6)" class="bloom-opt bloom-6 flex items-center justify-center text-[10px] font-bold" id="b-opt-6" title="Sáng tạo">L6</div>
-            </div>
-        </div>
-
-        <div class="flex gap-2">
-            <button onclick="saveCell()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs py-1.5 rounded font-bold">Lưu</button>
-            <button onclick="clearCell()" class="flex-1 bg-slate-100 hover:bg-red-100 text-slate-600 hover:text-red-600 text-xs py-1.5 rounded font-bold">Xóa</button>
-        </div>
+    <div class="mb-3">
+      <label class="text-xs block text-slate-600 mb-1">Số lượng câu hỏi:</label>
+      <input type="number" id="editorQ" class="w-full border border-slate-300 rounded px-2 py-1 text-sm font-bold text-center focus:border-blue-500 outline-none" min="0">
     </div>
 
-    <script>
-        // =========================
-        // ========== CLOUD =========
-        // =========================
-        const CLOUD_PROJECT_ID = "blueprint2026"; // đổi tên nếu muốn lưu nhiều blueprint khác nhau
-        let cloudLastSavedAt = null;
-        let cloudLastUrl = null;
-
-        function setCloudStatus(text) {
-            const el = document.getElementById("cloudStatus");
-            if (el) el.innerText = text;
-        }
-
-        function getState() {
-            return {
-                appData,
-                clos,
-                configTarget,
-                currentSystemIdx
-            };
-        }
-
-        function applyState(state) {
-            if (!state) return;
-
-            if (Array.isArray(state.appData)) appData = state.appData;
-            if (Array.isArray(state.clos)) clos = state.clos;
-            if (state.configTarget) configTarget = state.configTarget;
-            if (Number.isInteger(state.currentSystemIdx)) currentSystemIdx = state.currentSystemIdx;
-
-            // đảm bảo configTarget.clo đủ key cho clos
-            if (!configTarget || !configTarget.clo) {
-                configTarget = configTarget || {};
-                configTarget.clo = {};
-            }
-            clos.forEach(c => {
-                if (configTarget.clo[c.id] === undefined) configTarget.clo[c.id] = 0;
-            });
-
-            // clamp idx
-            if (currentSystemIdx < 0) currentSystemIdx = 0;
-            if (currentSystemIdx >= appData.length) currentSystemIdx = Math.max(appData.length - 1, 0);
-
-            renderSidebar();
-            renderMatrix();
-            renderCLOInfo();
-            renderConfig();
-            updateGlobalStats();
-        }
-
-        async function saveToCloud(projectId = CLOUD_PROJECT_ID) {
-            try {
-                setCloudStatus("đang lưu...");
-                const payload = getState();
-
-                const r = await fetch("/api/save", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ projectId, data: payload })
-                });
-
-                const j = await r.json();
-                if (!r.ok) throw new Error(j.error || "Save failed");
-
-                cloudLastSavedAt = new Date().toISOString();
-                cloudLastUrl = j.url;
-
-                setCloudStatus("đã lưu");
-                // lưu thêm local để bạn debug nếu cần
-                localStorage.setItem("matrix_cloud_url_" + projectId, j.url);
-                localStorage.setItem("matrix_cloud_savedAt_" + projectId, cloudLastSavedAt);
-
-                alert("✅ Đã lưu lên cloud (Vercel Blob)!");
-            } catch (e) {
-                console.error(e);
-                setCloudStatus("lỗi");
-                alert("❌ Lưu cloud lỗi: " + (e?.message || e));
-            }
-        }
-
-        async function loadFromCloud(projectId = CLOUD_PROJECT_ID) {
-            try {
-                setCloudStatus("đang tải...");
-                const r = await fetch(`/api/load?projectId=${encodeURIComponent(projectId)}`, { cache: "no-store" });
-                const j = await r.json();
-
-                if (!j.found) {
-                    setCloudStatus("chưa có dữ liệu");
-                    return alert("Chưa có dữ liệu cloud cho projectId: " + projectId);
-                }
-
-                applyState(j.data);
-                cloudLastSavedAt = j.savedAt || null;
-                cloudLastUrl = j.meta?.url || null;
-
-                setCloudStatus("đã tải");
-                alert("✅ Đã tải dữ liệu từ cloud!");
-            } catch (e) {
-                console.error(e);
-                setCloudStatus("lỗi");
-                alert("❌ Tải cloud lỗi: " + (e?.message || e));
-            }
-        }
-
-        // autosave (tùy chọn): cứ có thay đổi thì tự lưu sau 1.2s
-        let _autosaveTimer = null;
-        function autoSaveDebounced() {
-            // BẬT nếu muốn autosave:
-            const ENABLE_AUTOSAVE = false;
-            if (!ENABLE_AUTOSAVE) return;
-
-            if (_autosaveTimer) clearTimeout(_autosaveTimer);
-            _autosaveTimer = setTimeout(() => {
-                saveToCloud().catch(()=>{});
-            }, 1200);
-        }
-
-        // =========================
-        // ====== APP LOGIC =========
-        // =========================
-
-        // --- DATA INITIALIZATION ---
-        const initialData = [
-            { name: "Bệnh Tạng phủ", weight: 9.09, problems: [ { name: "Biện chứng tạng phủ" } ] },
-            { name: "Bệnh hệ thống Tim mạch – hô hấp", weight: 13.64, problems: [
-                { name: "YHHĐ: Bệnh mạch vành mạn. YHCT: Tâm thống." },
-                { name: "YHHĐ: Tăng huyết áp. YHCT: Huyễn vựng." },
-                { name: "YHHĐ: Suy tĩnh mạch mạn tính." },
-                { name: "YHHĐ: COPD." },
-                { name: "YHHĐ: Hen phế quản. YHCT: Háo chứng, suyễn chứng." }
-            ]},
-            { name: "Bệnh hệ thống Tiết niệu – Nội tiết - Huyết học", weight: 11.36, problems: [
-                { name: "YHHĐ: Nhiễm khuẩn tiết niệu. YHCT: Lâm chứng." },
-                { name: "YHHĐ: Béo phì. YHCT: Phì bạng." },
-                { name: "YHHĐ: Đái tháo đường. YHCT: Tiêu khát." },
-                { name: "YHHĐ: Thiếu máu mạn." }
-            ]},
-            { name: "Bệnh hệ thống Tiêu hóa - gan mật", weight: 11.36, problems: [
-                { name: "YHHĐ: Viêm loét dạ dày tá tràng. YHCT: Vị quản thống, Phúc mãn, Bĩ mãn, Chứng trướng." },
-                { name: "YHHĐ: GERD. YHCT: Hung thống, Ái khí." },
-                { name: "YHHĐ: Hội chứng ruột kích thích. YHCT: Tiết tả, Phúc mãn, Tiện bí." },
-                { name: "YHHĐ: Viêm gan mạn. YHCT: Hoàng đản, chứng trướng." },
-                { name: "YHHĐ: Xơ gan. YHCT: Hoàng đản, Cổ trướng." }
-            ]},
-            { name: "Bệnh hệ thống Ngũ quan – Lão khoa", weight: 4.55, problems: [
-                { name: "YHHĐ: Bệnh thận mạn. YHCT: Hư lao." },
-                { name: "YHHĐ: Viêm mũi dị ứng." }
-            ]},
-            { name: "Bệnh hệ thống Cơ - xương – khớp", weight: 13.64, problems: [
-                { name: "YHHĐ: Thoái hóa cột sống thắt lưng. YHCT: Tý chứng, Yêu thống." },
-                { name: "YHHĐ: Thoái hóa khớp gối. YHCT: Tý chứng, Hạc tất phong." },
-                { name: "YHHĐ: Loãng xương." },
-                { name: "YHHĐ: Viêm khớp dạng thấp. YHCT: Tý chứng." },
-                { name: "YHHĐ: Viêm khớp gout. YHCT: Tý chứng, Thống phong." }
-            ]},
-            { name: "Bệnh hệ thống Thần kinh", weight: 13.64, problems: [
-                { name: "YHHĐ: Di chứng tai biến mạch máu não. YHCT: Bán thân bất toại." },
-                { name: "YHHĐ: Đau đầu. YHCT: Đầu thống, Đàm chứng." },
-                { name: "YHHĐ: Đau thần kinh tọa. YHCT: Yêu thống, Yêu cước thống, Tọa cốt phong, Ma mộc bất nhân." },
-                { name: "YHHĐ: Liệt mặt. YHCT: Khẩu nhãn oa tà." },
-                { name: "YHHĐ: Mất ngủ. YHCT: Thất miên." }
-            ]},
-            { name: "Bệnh hệ thống Nhiễm – Phụ", weight: 9.09, problems: [
-                { name: "YHHĐ: Viêm gan siêu vi. YHCT: Hoàng đản." },
-                { name: "YHHĐ: Sốt xuất huyết Dengue. YHCT: Ôn bệnh." },
-                { name: "YHHĐ: Đau bụng kinh nguyên phát. YHCT: Thống kinh." },
-                { name: "YHHĐ: Rối loạn mãn kinh và chu mãn kinh." }
-            ]},
-            { name: "Bệnh hệ thống Nhi khoa", weight: 4.55, problems: [
-                { name: "YHHĐ: Suy dinh dưỡng ở trẻ em. YHCT: Cam tích." },
-                { name: "YHHĐ: Đái dầm ở trẻ em. YHCT: Dạ niệu." }
-            ]},
-            { name: "Bệnh hệ thống Ngoại khoa - Da liễu", weight: 9.09, problems: [
-                { name: "YHHĐ: Trĩ. YHCT: Hạ trĩ." },
-                { name: "YHHĐ: Sỏi đường niệu. YHCT: Lâm chứng." },
-                { name: "YHHĐ: Mày đay." },
-                { name: "YHHĐ: Mụn trứng cá." }
-            ]}
-        ];
-
-        let clos = [
-            { id: "LO1", name: "Chẩn đoán", desc: "Có khả năng chẩn đoán xác định và phân biệt..." },
-            { id: "LO2", name: "Điều trị", desc: "Lập kế hoạch điều trị và theo dõi..." },
-            { id: "LO3", name: "Dự phòng", desc: "Tư vấn giáo dục sức khỏe..." },
-            { id: "LO4", name: "Cơ chế", desc: "Giải thích cơ chế bệnh sinh..." }
-        ];
-
-        // Configuration Targets (Weights in %)
-        let configTarget = {
-            bloom: { 1: 20, 2: 30, 3: 30, 4: 10, 5: 5, 6: 5 },
-            clo: {}
-        };
-        clos.forEach(c => configTarget.clo[c.id] = 25);
-
-        // Data Structure
-        let appData = [];
-        let currentSystemIdx = 0;
-        let activeCell = { sysIdx: null, probIdx: null, cloId: null };
-        let currentBloomSelection = 1;
-        let currentTab = 'matrix';
-
-        // --- INIT ---
-        function init() {
-            // thử auto-load 1 lần (nếu có cloud)
-            // Nếu bạn không muốn tự tải khi mở trang, comment 2 dòng dưới.
-            loadFromCloud().catch(() => {});
-
-            // init local data (fallback)
-            appData = initialData.map(cat => ({
-                name: cat.name,
-                weight: cat.weight,
-                problems: cat.problems.map(p => ({
-                    name: p.name,
-                    weight: 1,
-                    matrix: {}
-                }))
-            }));
-
-            renderSidebar();
-            renderMatrix();
-            renderCLOInfo();
-            renderConfig();
-            updateGlobalStats();
-        }
-
-        // --- TAB NAVIGATION ---
-        function switchTab(tab) {
-            currentTab = tab;
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById('tab-' + tab).classList.add('active');
-
-            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
-            document.getElementById('view-' + tab).classList.remove('hidden');
-
-            if (tab === 'matrix') {
-                document.getElementById('matrixHint').style.visibility = 'visible';
-                renderMatrix();
-            } else if (tab === 'clo-info') {
-                document.getElementById('matrixHint').style.visibility = 'hidden';
-                renderCLOInfo();
-            } else {
-                document.getElementById('matrixHint').style.visibility = 'hidden';
-                populateConfigSystemSelect();
-                renderConfig();
-            }
-        }
-
-        // --- RENDER SIDEBAR ---
-        function renderSidebar() {
-            const list = document.getElementById('sidebarList');
-            list.innerHTML = '';
-            appData.forEach((sys, idx) => {
-                let qCount = 0;
-                sys.problems.forEach(p => Object.values(p.matrix).forEach(cell => qCount += (parseInt(cell.q)||0)));
-
-                const div = document.createElement('div');
-                div.className = `sidebar-item px-3 py-2 text-sm flex justify-between items-center group ${idx === currentSystemIdx ? 'active' : 'text-slate-600'}`;
-                div.innerHTML = `
-                    <span class="truncate flex-1" onclick="selectSystem(${idx})">${sys.name}</span>
-                    <div class="flex items-center gap-2">
-                        <span class="text-[10px] bg-slate-200 text-slate-600 px-1.5 rounded-full font-bold" onclick="selectSystem(${idx})">${qCount}</span>
-                        <button onclick="deleteSystem(${idx})" title="Xóa hệ thống" class="sidebar-actions text-red-400 hover:text-red-600 hover:bg-red-50 p-1 rounded transition-colors">
-                            <i class="fa-solid fa-trash-can text-xs"></i>
-                        </button>
-                    </div>
-                `;
-                list.appendChild(div);
-            });
-        }
-
-        function selectSystem(idx) {
-            currentSystemIdx = idx;
-            renderSidebar();
-            if(currentTab === 'matrix') renderMatrix();
-            if(currentTab === 'config') {
-                document.getElementById('configSystemSelect').value = idx;
-                renderConfig();
-            }
-        }
-
-        // --- RENDER MATRIX ---
-        function renderMatrix() {
-            if (appData.length === 0) {
-                document.getElementById('matrixBody').innerHTML = '<tr><td colspan="10" class="p-4 text-center text-slate-500">Chưa có hệ thống nào. Vui lòng thêm mới.</td></tr>';
-                return;
-            }
-
-            const sys = appData[currentSystemIdx];
-            document.getElementById('currentSystemTitle').innerText = sys.name;
-            const thead = document.getElementById('matrixHead');
-            const tbody = document.getElementById('matrixBody');
-
-            let headHtml = `<tr><th class="corner-header">Vấn đề lâm sàng</th>`;
-            clos.forEach(clo => headHtml += `<th style="min-width: 80px;" title="${clo.name}">${clo.id}</th>`);
-            headHtml += `<th style="width: 60px;" class="bg-slate-100">Tổng</th></tr>`;
-            thead.innerHTML = headHtml;
-
-            tbody.innerHTML = '';
-
-            let colTotals = {};
-            clos.forEach(c => colTotals[c.id] = 0);
-            let sysTotal = 0;
-
-            sys.problems.forEach((prob, pIdx) => {
-                const tr = document.createElement('tr');
-                let rowHtml = `<td class="row-header group">
-                    <div class="flex justify-between items-start">
-                        <div class="text-problem flex-1 mr-2" contenteditable="true" onblur="updateProblemName(${pIdx}, this.innerText)">${prob.name}</div>
-                        <button onclick="deleteProblem(${pIdx})" title="Xóa vấn đề" class="row-action-btn text-red-300 hover:text-red-500 pt-0.5">
-                             <i class="fa-solid fa-circle-xmark"></i>
-                        </button>
-                    </div>
-                </td>`;
-                let rowTotal = 0;
-
-                clos.forEach(clo => {
-                    const cellData = prob.matrix[clo.id];
-                    const hasData = cellData && cellData.q > 0;
-                    const bloomClass = hasData ? `bloom-${cellData.bloom}` : 'empty';
-                    const content = hasData ? cellData.q : '';
-
-                    if(hasData) {
-                        const val = parseInt(cellData.q);
-                        rowTotal += val;
-                        colTotals[clo.id] += val;
-                        sysTotal += val;
-                    }
-
-                    rowHtml += `<td><div class="matrix-cell ${bloomClass}" onclick="openCell(event, ${pIdx}, '${clo.id}')">${content}</div></td>`;
-                });
-
-                rowHtml += `<td class="text-center font-bold text-blue-700 bg-slate-50">${rowTotal}</td>`;
-                tr.innerHTML = rowHtml;
-                tbody.appendChild(tr);
-            });
-
-            const footerTr = document.createElement('tr');
-            footerTr.className = 'footer-row';
-            let footerHtml = `<td class="row-header">TỔNG CỘNG:</td>`;
-            clos.forEach(clo => {
-                const val = colTotals[clo.id];
-                footerHtml += `<td class="text-center">${val > 0 ? val : ''}</td>`;
-            });
-            footerHtml += `<td class="text-center text-lg">${sysTotal}</td>`;
-            footerTr.innerHTML = footerHtml;
-            tbody.appendChild(footerTr);
-
-            const addRow = document.createElement('tr');
-            addRow.innerHTML = `<td colspan="${clos.length + 2}" class="p-2 text-center">
-                <button onclick="addProblem()" class="text-blue-600 hover:text-blue-800 text-xs font-bold uppercase"><i class="fa-solid fa-plus"></i> Thêm vấn đề</button>
-            </td>`;
-            tbody.appendChild(addRow);
-        }
-
-        // --- SYSTEM & PROBLEM MANAGEMENT ---
-        function addSystem() {
-            const name = prompt("Nhập tên hệ thống mới:", "Hệ thống mới");
-            if (name) {
-                appData.push({
-                    name: name,
-                    weight: 10,
-                    problems: [{ name: "Vấn đề 1...", weight: 1, matrix: {} }]
-                });
-                currentSystemIdx = appData.length - 1;
-                renderSidebar();
-                renderMatrix();
-                renderConfig();
-                updateGlobalStats();
-                autoSaveDebounced();
-            }
-        }
-
-        function deleteSystem(idx) {
-            if(confirm(`Bạn có chắc muốn xóa hệ thống "${appData[idx].name}" không?`)) {
-                appData.splice(idx, 1);
-                if (appData.length === 0) {
-                    currentSystemIdx = 0;
-                } else if (currentSystemIdx >= appData.length) {
-                    currentSystemIdx = appData.length - 1;
-                }
-                renderSidebar();
-                renderMatrix();
-                renderConfig();
-                updateGlobalStats();
-                autoSaveDebounced();
-            }
-        }
-
-        function updateProblemName(pIdx, val) {
-            if(appData[currentSystemIdx] && appData[currentSystemIdx].problems[pIdx]) {
-                appData[currentSystemIdx].problems[pIdx].name = val;
-                renderConfig();
-                renderSidebar();
-                autoSaveDebounced();
-            }
-        }
-
-        function addProblem() {
-            if (appData.length === 0) return;
-            appData[currentSystemIdx].problems.push({ name: "Vấn đề mới...", weight: 1, matrix: {} });
-            renderMatrix();
-            renderConfig();
-            renderSidebar();
-            updateGlobalStats();
-            autoSaveDebounced();
-        }
-
-        function deleteProblem(pIdx) {
-            const probName = appData[currentSystemIdx].problems[pIdx].name;
-            if(confirm(`Xóa vấn đề: "${probName}"?`)) {
-                appData[currentSystemIdx].problems.splice(pIdx, 1);
-                renderMatrix();
-                renderConfig();
-                renderSidebar();
-                updateGlobalStats();
-                autoSaveDebounced();
-            }
-        }
-
-        // --- RENDER CLO INFO ---
-        function renderCLOInfo() {
-            const tbody = document.getElementById('cloInfoBody');
-            tbody.innerHTML = '';
-            clos.forEach((clo, idx) => {
-                const tr = document.createElement('tr');
-                tr.className = "border-b border-slate-100 hover:bg-slate-50";
-                tr.innerHTML = `
-                    <td class="px-4 py-3 font-bold text-blue-600">${clo.id}</td>
-                    <td class="px-4 py-3"><input type="text" value="${clo.name}" onchange="updateCLOData(${idx}, 'name', this.value)" class="w-full bg-transparent border-b border-dashed border-slate-300 outline-none"></td>
-                    <td class="px-4 py-3"><textarea onchange="updateCLOData(${idx}, 'desc', this.value)" class="clo-desc-input" rows="2">${clo.desc || ''}</textarea></td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function updateCLOData(idx, field, val) {
-            clos[idx][field] = val;
-            if(field === 'name') renderMatrix();
-            renderConfig();
-            autoSaveDebounced();
-        }
-
-        // --- RENDER CONFIG & LIVE MONITOR ---
-        function populateConfigSystemSelect() {
-            const sel = document.getElementById('configSystemSelect');
-            sel.innerHTML = '';
-            appData.forEach((sys, idx) => {
-                const opt = document.createElement('option');
-                opt.value = idx;
-                opt.text = sys.name;
-                if(idx === currentSystemIdx) opt.selected = true;
-                sel.appendChild(opt);
-            });
-        }
-
-        function changeConfigSystem(val) {
-            currentSystemIdx = parseInt(val);
-            renderConfig();
-        }
-
-        function renderConfig() {
-            if (appData.length === 0) return;
-            const currentSys = appData[currentSystemIdx];
-            const stats = calculateActualStats();
-
-            document.getElementById('systemWeightInput').value = currentSys.weight;
-            const sysActual = stats.systemPercents[currentSystemIdx] || 0;
-            document.getElementById('systemActualPercent').innerText = sysActual + '%';
-            document.getElementById('systemActualBar').style.width = sysActual + '%';
-
-            const probList = document.getElementById('problemWeightList');
-            probList.innerHTML = '';
-
-            const sysRelWeightTotal = currentSys.problems.reduce((a,b) => a + (b.weight||0), 0);
-
-            currentSys.problems.forEach((prob, pIdx) => {
-                const w = prob.weight || 0;
-                const expectedShare = sysRelWeightTotal ? (w/sysRelWeightTotal)*100 : 0;
-                const sysTotalQ = stats.systemCounts[currentSystemIdx] || 1;
-                const probQ = stats.problemCounts[`${currentSystemIdx}-${pIdx}`] || 0;
-                const probActual = Math.round((probQ / sysTotalQ) * 100);
-
-                probList.innerHTML += `
-                    <div class="flex flex-col mb-3 pb-3 border-b border-slate-50">
-                         <div class="flex items-center justify-between gap-2">
-                            <div class="flex-1 font-medium text-slate-700 text-sm" title="${prob.name}">${prob.name}</div>
-                            <div class="flex items-center gap-1">
-                                <span class="text-[10px] text-slate-400 mr-1">Trọng số:</span>
-                                <input type="number" value="${w}" onchange="updateProblemWeight(${pIdx}, this.value)" class="config-input w-14 text-right font-bold text-slate-700" placeholder="1">
-                            </div>
-                        </div>
-                        <div class="mt-1">
-                            <div class="flex justify-between text-[10px] text-slate-400">
-                                <span>Thực tế (trong hệ): <b>${probActual}%</b> (Mục tiêu: ~${Math.round(expectedShare)}%)</span>
-                            </div>
-                            <div class="monitor-bar-bg h-1">
-                                <div class="monitor-bar-fill ${Math.abs(probActual - expectedShare) > 10 ? 'bg-red-400':'bg-emerald-400'}" style="width: ${Math.min(probActual, 100)}%"></div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-
-            const bloomList = document.getElementById('bloomConfigList');
-            bloomList.innerHTML = '';
-            let bloomTargetTotal = 0;
-            [1,2,3,4,5,6].forEach(lvl => {
-                const target = configTarget.bloom[lvl] || 0;
-                const actual = stats.bloomPercents[lvl] || 0;
-                bloomTargetTotal += parseInt(target);
-
-                bloomList.innerHTML += `
-                    <div class="p-2 bg-slate-50 rounded border border-slate-100">
-                        <div class="flex justify-between mb-1">
-                            <div class="text-xs font-bold text-slate-600">Mức ${lvl}</div>
-                            <div class="flex items-center">
-                                <input type="number" value="${target}" onchange="updateConfig('bloom', ${lvl}, this.value)" class="config-input w-10 py-0 text-center text-xs font-bold">
-                                <span class="text-[10px] ml-1">%</span>
-                            </div>
-                        </div>
-                        <div class="monitor-bar-bg">
-                            <div class="monitor-bar-fill ${Math.abs(actual - target) > 5 ? 'bg-red-500':'bg-purple-500'}" style="width: ${Math.min(actual, 100)}%"></div>
-                        </div>
-                        <div class="text-[10px] text-right mt-1 text-slate-500">Thực tế: <b>${actual}%</b></div>
-                    </div>
-                `;
-            });
-            document.getElementById('bloomTotalSum').innerText = bloomTargetTotal + '%';
-
-            const cloList = document.getElementById('cloConfigList');
-            cloList.innerHTML = '';
-            let cloTargetTotal = 0;
-            clos.forEach(clo => {
-                const target = configTarget.clo[clo.id] || 0;
-                const actual = stats.cloPercents[clo.id] || 0;
-                cloTargetTotal += parseInt(target);
-
-                cloList.innerHTML += `
-                    <div class="flex items-center gap-3">
-                        <div class="w-16 text-sm font-medium text-slate-600">${clo.id}</div>
-                        <div class="flex-1">
-                            <div class="flex justify-between items-center mb-1">
-                                <div class="monitor-bar-bg flex-1 mr-2">
-                                    <div class="monitor-bar-fill ${Math.abs(actual - target) > 5 ? 'bg-orange-500':'bg-emerald-500'}" style="width: ${Math.min(actual, 100)}%"></div>
-                                </div>
-                                <span class="text-[10px] font-bold text-slate-500 w-8 text-right">${actual}%</span>
-                            </div>
-                        </div>
-                        <input type="number" value="${target}" onchange="updateConfig('clo', '${clo.id}', this.value)" class="config-input text-slate-700 font-bold">
-                    </div>
-                `;
-            });
-            document.getElementById('cloTotalSum').innerText = cloTargetTotal + '%';
-        }
-
-        function updateConfig(type, id, value) {
-            if (type === 'bloom') configTarget.bloom[id] = parseInt(value) || 0;
-            else configTarget.clo[id] = parseInt(value) || 0;
-            renderConfig();
-            autoSaveDebounced();
-        }
-
-        function updateSystemWeight(val) {
-            appData[currentSystemIdx].weight = parseFloat(val) || 0;
-            renderConfig();
-            autoSaveDebounced();
-        }
-
-        function updateProblemWeight(pIdx, val) {
-            appData[currentSystemIdx].problems[pIdx].weight = parseInt(val) || 0;
-            renderConfig();
-            autoSaveDebounced();
-        }
-
-        // --- LOGIC: AUTO GENERATOR ---
-        function runAutoGenerator() {
-            const totalQ = parseInt(document.getElementById('autoTotalQ').value) || 100;
-            if(!confirm("Hệ thống sẽ xóa dữ liệu hiện tại và tạo mới dựa trên cấu hình tỉ trọng. Tiếp tục?")) return;
-
-            appData.forEach(sys => sys.problems.forEach(p => p.matrix = {}));
-
-            let bloomDeck = [];
-            Object.keys(configTarget.bloom).forEach(lvl => {
-                const count = Math.round(totalQ * (configTarget.bloom[lvl] / 100));
-                for(let i=0; i<count; i++) bloomDeck.push(parseInt(lvl));
-            });
-            while(bloomDeck.length < totalQ) bloomDeck.push(Math.floor(Math.random() * 6) + 1);
-            bloomDeck = shuffle(bloomDeck);
-
-            let cloDeck = [];
-            clos.forEach(clo => {
-                const count = Math.round(totalQ * (configTarget.clo[clo.id] / 100));
-                for(let i=0; i<count; i++) cloDeck.push(clo.id);
-            });
-            while(cloDeck.length < totalQ) cloDeck.push(clos[Math.floor(Math.random()*clos.length)].id);
-            cloDeck = shuffle(cloDeck);
-
-            const totalSysWeight = appData.reduce((acc, sys) => acc + (parseFloat(sys.weight)||0), 0);
-            let currentQCount = 0;
-
-            appData.forEach(sys => {
-                if (!sys.weight) return;
-                let sysTargetQ = (parseFloat(sys.weight) / totalSysWeight) * totalQ;
-
-                const totalProbWeight = sys.problems.reduce((acc, p) => acc + (parseFloat(p.weight)||0), 0);
-
-                sys.problems.forEach(prob => {
-                     if(!prob.weight) return;
-                     let probTargetQ = (parseFloat(prob.weight) / totalProbWeight) * sysTargetQ;
-
-                     let count = Math.floor(probTargetQ);
-                     if (Math.random() < (probTargetQ - count)) count++;
-
-                     for(let k=0; k<count; k++) {
-                         if (currentQCount >= totalQ) break;
-
-                         if (cloDeck.length === 0) cloDeck.push(clos[Math.floor(Math.random()*clos.length)].id);
-                         if (bloomDeck.length === 0) bloomDeck.push(Math.floor(Math.random() * 6) + 1);
-
-                         const cloId = cloDeck.pop();
-                         const bloomLvl = bloomDeck.pop();
-
-                         if (!prob.matrix[cloId]) prob.matrix[cloId] = { q: 0, bloom: bloomLvl };
-                         prob.matrix[cloId].q += 1;
-                         currentQCount++;
-                     }
-                });
-            });
-
-            renderMatrix();
-            renderSidebar();
-            updateGlobalStats();
-            renderConfig();
-            autoSaveDebounced();
-            alert(`Đã tạo xong ma trận với ${currentQCount} câu hỏi dựa trên tỉ trọng cấu hình!`);
-        }
-
-        function shuffle(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
-
-        function calculateActualStats() {
-            let total = 0;
-            let bloomCounts = {1:0, 2:0, 3:0, 4:0, 5:0, 6:0};
-            let cloCounts = {};
-            let systemCounts = {};
-            let problemCounts = {};
-
-            clos.forEach(c => cloCounts[c.id] = 0);
-
-            appData.forEach((sys, sIdx) => {
-                systemCounts[sIdx] = 0;
-                sys.problems.forEach((prob, pIdx) => {
-                    let pCount = 0;
-                    Object.entries(prob.matrix).forEach(([cloId, cell]) => {
-                        const q = parseInt(cell.q) || 0;
-                        if(q > 0) {
-                            total += q;
-                            pCount += q;
-                            systemCounts[sIdx] += q;
-                            if(cloCounts[cloId] !== undefined) cloCounts[cloId] += q;
-                            if(cell.bloom) bloomCounts[cell.bloom] += q;
-                        }
-                    });
-                    problemCounts[`${sIdx}-${pIdx}`] = pCount;
-                });
-            });
-
-            let bloomPercents = {};
-            Object.keys(bloomCounts).forEach(k => bloomPercents[k] = total ? Math.round((bloomCounts[k]/total)*100) : 0);
-
-            let cloPercents = {};
-            Object.keys(cloCounts).forEach(k => cloPercents[k] = total ? Math.round((cloCounts[k]/total)*100) : 0);
-
-            let systemPercents = {};
-            Object.keys(systemCounts).forEach(k => systemPercents[k] = total ? ((systemCounts[k]/total)*100).toFixed(2) : 0);
-
-            return { total, bloomPercents, cloPercents, systemPercents, systemCounts, problemCounts };
-        }
-
-        // --- EDITOR LOGIC ---
-        function openCell(e, pIdx, cloId) {
-            e.stopPropagation();
-            activeCell = { sysIdx: currentSystemIdx, probIdx: pIdx, cloId: cloId };
-            const cellData = appData[currentSystemIdx].problems[pIdx].matrix[cloId] || { q: '', bloom: 1 };
-
-            document.getElementById('editorQ').value = cellData.q;
-            selectBloom(cellData.bloom || 1);
-
-            const editor = document.getElementById('cellEditor');
-            const rect = e.target.getBoundingClientRect();
-            editor.style.display = 'block';
-            editor.style.top = (rect.bottom + 5) + 'px';
-            editor.style.left = (rect.left - 20) + 'px';
-            if(rect.left + 220 > window.innerWidth) editor.style.left = (window.innerWidth - 240) + 'px';
-            document.getElementById('editorQ').focus();
-        }
-
-        function selectBloom(lvl) {
-            currentBloomSelection = lvl;
-            document.querySelectorAll('.bloom-opt').forEach(el => el.classList.remove('selected'));
-            const el = document.getElementById('b-opt-' + lvl);
-            if(el) el.classList.add('selected');
-        }
-
-        function saveCell() {
-            const qVal = parseInt(document.getElementById('editorQ').value);
-            const prob = appData[activeCell.sysIdx].problems[activeCell.probIdx];
-            if (qVal > 0) prob.matrix[activeCell.cloId] = { q: qVal, bloom: currentBloomSelection };
-            else delete prob.matrix[activeCell.cloId];
-
-            closeEditor();
-            renderMatrix();
-            renderSidebar();
-            updateGlobalStats();
-            renderConfig();
-            autoSaveDebounced();
-        }
-
-        function clearCell() {
-            document.getElementById('editorQ').value = '';
-            saveCell();
-        }
-
-        function closeEditor() {
-            document.getElementById('cellEditor').style.display = 'none';
-        }
-
-        // --- EXPORT LOGIC ---
-        function exportRealExcel() {
-            if (!confirm("Xuất file Excel với dữ liệu hiện tại?")) return;
-
-            const ws_data = [];
-            const headers = ["STT", "Hệ thống / Vấn đề lâm sàng", ...clos.map(c => c.id), "Tổng"];
-            ws_data.push(headers);
-
-            let grandTotal = 0;
-            const colTotals = new Array(clos.length).fill(0);
-
-            appData.forEach((sys, sIdx) => {
-                const sysRow = [`${sIdx + 1}`, sys.name.toUpperCase()];
-                for(let i=0; i<clos.length; i++) sysRow.push("");
-                sysRow.push(0);
-
-                const sysRowIdx = ws_data.push(sysRow) - 1;
-                let sysSum = 0;
-
-                sys.problems.forEach((prob, pIdx) => {
-                    const row = [`${sIdx + 1}.${pIdx + 1}`, prob.name];
-                    let rowSum = 0;
-
-                    clos.forEach((clo, cIdx) => {
-                        const cell = prob.matrix[clo.id];
-                        if (cell && cell.q > 0) {
-                            row.push(cell.q);
-                            rowSum += parseInt(cell.q);
-                            colTotals[cIdx] += parseInt(cell.q);
-                        } else {
-                            row.push("");
-                        }
-                    });
-
-                    row.push(rowSum);
-                    sysSum += rowSum;
-                    ws_data.push(row);
-                });
-
-                ws_data[sysRowIdx][ws_data[sysRowIdx].length - 1] = sysSum;
-                grandTotal += sysSum;
-            });
-
-            const footer = ["", "TỔNG CỘNG", ...colTotals, grandTotal];
-            ws_data.push(footer);
-
-            const info_data = [];
-            info_data.push(["THÔNG SỐ CẤU HÌNH & THỐNG KÊ", ""]);
-            info_data.push(["Tổng số câu hỏi:", grandTotal]);
-            info_data.push(["", ""]);
-            info_data.push(["MỤC TIÊU BLOOM (Target)", "%"]);
-            Object.entries(configTarget.bloom).forEach(([k, v]) => info_data.push([`Mức ${k}`, v]));
-            info_data.push(["", ""]);
-            info_data.push(["MỤC TIÊU CLO (Target)", "%"]);
-            clos.forEach(c => info_data.push([c.id, configTarget.clo[c.id]]));
-
-            const wb = XLSX.utils.book_new();
-
-            const ws1 = XLSX.utils.aoa_to_sheet(ws_data);
-            ws1['!cols'] = [{wch: 6}, {wch: 50}, ...clos.map(()=>({wch: 10})), {wch: 8}];
-            XLSX.utils.book_append_sheet(wb, ws1, "Ma trận");
-
-            const ws2 = XLSX.utils.aoa_to_sheet(info_data);
-            ws2['!cols'] = [{wch: 30}, {wch: 10}];
-            XLSX.utils.book_append_sheet(wb, ws2, "Cấu hình");
-
-            XLSX.writeFile(wb, "Matrix_Blueprint_Export.xlsx");
-        }
-
-        function downloadTemplate() {
-            const assetLink = "assets/form test blueprint - trong so 5.2.2026.xlsx";
-            const link = document.createElement('a');
-            link.href = assetLink;
-            link.download = 'Template_Form.xlsx';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        function addCLO() {
-            const id = prompt("Nhập mã CLO mới:");
-            if(id) {
-                const newId = id.toUpperCase();
-                clos.push({ id: newId, name: id, desc: "" });
-                configTarget.clo[newId] = 0;
-                renderMatrix();
-                renderConfig();
-                renderCLOInfo();
-                autoSaveDebounced();
-            }
-        }
-
-        function updateGlobalStats() {
-            document.getElementById('totalQuestionsDisplay').innerText = calculateActualStats().total;
-        }
-
-        document.addEventListener('click', (e) => {
-            const editor = document.getElementById('cellEditor');
-            if (editor.style.display === 'block' && !editor.contains(e.target) && !e.target.classList.contains('matrix-cell')) closeEditor();
+    <div class="mb-3">
+      <label class="text-xs block text-slate-600 mb-1">Mức độ Bloom:</label>
+      <div class="bloom-selector">
+        <div onclick="selectBloom(1)" class="bloom-opt bloom-1 flex items-center justify-center text-[10px] font-bold" id="b-opt-1" title="Ghi nhớ">L1</div>
+        <div onclick="selectBloom(2)" class="bloom-opt bloom-2 flex items-center justify-center text-[10px] font-bold" id="b-opt-2" title="Hiểu">L2</div>
+        <div onclick="selectBloom(3)" class="bloom-opt bloom-3 flex items-center justify-center text-[10px] font-bold" id="b-opt-3" title="Áp dụng">L3</div>
+        <div onclick="selectBloom(4)" class="bloom-opt bloom-4 flex items-center justify-center text-[10px] font-bold" id="b-opt-4" title="Phân tích">L4</div>
+        <div onclick="selectBloom(5)" class="bloom-opt bloom-5 flex items-center justify-center text-[10px] font-bold" id="b-opt-5" title="Đánh giá">L5</div>
+        <div onclick="selectBloom(6)" class="bloom-opt bloom-6 flex items-center justify-center text-[10px] font-bold" id="b-opt-6" title="Sáng tạo">L6</div>
+      </div>
+    </div>
+
+    <div class="flex gap-2">
+      <button onclick="saveCell()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs py-1.5 rounded font-bold">Lưu</button>
+      <button onclick="clearCell()" class="flex-1 bg-slate-100 hover:bg-red-100 text-slate-600 hover:text-red-600 text-xs py-1.5 rounded font-bold">Xóa</button>
+    </div>
+  </div>
+
+  <!-- PROBLEM EDITOR POPUP (SIDEBAR) -->
+  <div id="problemEditor">
+    <div class="flex justify-between items-center mb-2">
+      <span class="text-xs font-bold text-slate-500 uppercase">Chỉnh sửa vấn đề</span>
+      <button onclick="closeProblemEditor()" class="text-slate-400 hover:text-red-500">
+        <i class="fa-solid fa-times"></i>
+      </button>
+    </div>
+
+    <div class="mb-2 flex items-center gap-2">
+      <span class="problem-chip" id="peSystemName">Hệ thống</span>
+      <span class="problem-chip" id="peProblemIndex">#</span>
+    </div>
+
+    <div class="mb-3">
+      <label class="text-xs block text-slate-600 mb-1">Tên vấn đề:</label>
+      <input id="peName" type="text"
+             class="w-full border border-slate-300 rounded px-2 py-1 text-sm font-semibold focus:border-blue-500 outline-none">
+    </div>
+
+    <div class="mb-3">
+      <label class="text-xs block text-slate-600 mb-1">Trọng số (weight):</label>
+      <input id="peWeight" type="number" min="0"
+             class="w-full border border-slate-300 rounded px-2 py-1 text-sm font-bold text-center focus:border-blue-500 outline-none">
+      <div class="text-[11px] text-slate-400 mt-1">* Trọng số dùng cho Auto Generator (phân bổ trong hệ).</div>
+    </div>
+
+    <div class="flex gap-2">
+      <button onclick="saveProblemEditor()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs py-2 rounded font-bold">
+        Lưu
+      </button>
+      <button onclick="deleteProblemFromEditor()" class="flex-1 bg-slate-100 hover:bg-red-100 text-slate-600 hover:text-red-600 text-xs py-2 rounded font-bold">
+        Xóa vấn đề
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // =========================
+    // ========== CLOUD =========
+    // =========================
+    const CLOUD_PROJECT_ID = "blueprint2026"; // đổi tên nếu muốn lưu nhiều blueprint khác nhau
+    let cloudLastSavedAt = null;
+    let cloudLastUrl = null;
+
+    function setCloudStatus(text) {
+      const el = document.getElementById("cloudStatus");
+      if (el) el.innerText = text;
+    }
+
+    function getState() {
+      return {
+        appData,
+        clos,
+        configTarget,
+        currentSystemIdx
+      };
+    }
+
+    function applyState(state) {
+      if (!state) return;
+
+      if (Array.isArray(state.appData)) appData = state.appData;
+      if (Array.isArray(state.clos)) clos = state.clos;
+      if (state.configTarget) configTarget = state.configTarget;
+      if (Number.isInteger(state.currentSystemIdx)) currentSystemIdx = state.currentSystemIdx;
+
+      // đảm bảo configTarget.clo đủ key cho clos
+      if (!configTarget || !configTarget.clo) {
+        configTarget = configTarget || {};
+        configTarget.clo = {};
+      }
+      clos.forEach(c => {
+        if (configTarget.clo[c.id] === undefined) configTarget.clo[c.id] = 0;
+      });
+
+      // clamp idx
+      if (currentSystemIdx < 0) currentSystemIdx = 0;
+      if (currentSystemIdx >= appData.length) currentSystemIdx = Math.max(appData.length - 1, 0);
+
+      renderSidebar();
+      renderMatrix();
+      renderCLOInfo();
+      renderConfig();
+      updateGlobalStats();
+    }
+
+    async function saveToCloud(projectId = CLOUD_PROJECT_ID) {
+      try {
+        setCloudStatus("đang lưu...");
+        const payload = getState();
+
+        const r = await fetch("/api/save", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ projectId, data: payload })
         });
 
-        init();
-    </script>
+        const j = await r.json();
+        if (!r.ok) throw new Error(j.error || "Save failed");
+
+        cloudLastSavedAt = new Date().toISOString();
+        cloudLastUrl = j.url;
+
+        setCloudStatus("đã lưu");
+        localStorage.setItem("matrix_cloud_url_" + projectId, j.url);
+        localStorage.setItem("matrix_cloud_savedAt_" + projectId, cloudLastSavedAt);
+
+        alert("✅ Đã lưu lên cloud (Vercel Blob)!");
+      } catch (e) {
+        console.error(e);
+        setCloudStatus("lỗi");
+        alert("❌ Lưu cloud lỗi: " + (e?.message || e));
+      }
+    }
+
+    async function loadFromCloud(projectId = CLOUD_PROJECT_ID) {
+      try {
+        setCloudStatus("đang tải...");
+        const r = await fetch(`/api/load?projectId=${encodeURIComponent(projectId)}`, { cache: "no-store" });
+        const j = await r.json();
+
+        if (!j.found) {
+          setCloudStatus("chưa có dữ liệu");
+          return alert("Chưa có dữ liệu cloud cho projectId: " + projectId);
+        }
+
+        applyState(j.data);
+        cloudLastSavedAt = j.savedAt || null;
+        cloudLastUrl = j.meta?.url || null;
+
+        setCloudStatus("đã tải");
+        alert("✅ Đã tải dữ liệu từ cloud!");
+      } catch (e) {
+        console.error(e);
+        setCloudStatus("lỗi");
+        alert("❌ Tải cloud lỗi: " + (e?.message || e));
+      }
+    }
+
+    // autosave (tùy chọn): cứ có thay đổi thì tự lưu sau 1.2s
+    let _autosaveTimer = null;
+    function autoSaveDebounced() {
+      const ENABLE_AUTOSAVE = false;
+      if (!ENABLE_AUTOSAVE) return;
+
+      if (_autosaveTimer) clearTimeout(_autosaveTimer);
+      _autosaveTimer = setTimeout(() => {
+        saveToCloud().catch(()=>{});
+      }, 1200);
+    }
+
+    // =========================
+    // ====== APP LOGIC =========
+    // =========================
+
+    // --- DATA INITIALIZATION ---
+    const initialData = [
+      { name: "Bệnh Tạng phủ", weight: 9.09, problems: [ { name: "Biện chứng tạng phủ" } ] },
+      { name: "Bệnh hệ thống Tim mạch – hô hấp", weight: 13.64, problems: [
+          { name: "YHHĐ: Bệnh mạch vành mạn. YHCT: Tâm thống." },
+          { name: "YHHĐ: Tăng huyết áp. YHCT: Huyễn vựng." },
+          { name: "YHHĐ: Suy tĩnh mạch mạn tính." },
+          { name: "YHHĐ: COPD." },
+          { name: "YHHĐ: Hen phế quản. YHCT: Háo chứng, suyễn chứng." }
+        ]},
+      { name: "Bệnh hệ thống Tiết niệu – Nội tiết - Huyết học", weight: 11.36, problems: [
+          { name: "YHHĐ: Nhiễm khuẩn tiết niệu. YHCT: Lâm chứng." },
+          { name: "YHHĐ: Béo phì. YHCT: Phì bạng." },
+          { name: "YHHĐ: Đái tháo đường. YHCT: Tiêu khát." },
+          { name: "YHHĐ: Thiếu máu mạn." }
+        ]},
+      { name: "Bệnh hệ thống Tiêu hóa - gan mật", weight: 11.36, problems: [
+          { name: "YHHĐ: Viêm loét dạ dày tá tràng. YHCT: Vị quản thống, Phúc mãn, Bĩ mãn, Chứng trướng." },
+          { name: "YHHĐ: GERD. YHCT: Hung thống, Ái khí." },
+          { name: "YHHĐ: Hội chứng ruột kích thích. YHCT: Tiết tả, Phúc mãn, Tiện bí." },
+          { name: "YHHĐ: Viêm gan mạn. YHCT: Hoàng đản, chứng trướng." },
+          { name: "YHHĐ: Xơ gan. YHCT: Hoàng đản, Cổ trướng." }
+        ]},
+      { name: "Bệnh hệ thống Ngũ quan – Lão khoa", weight: 4.55, problems: [
+          { name: "YHHĐ: Bệnh thận mạn. YHCT: Hư lao." },
+          { name: "YHHĐ: Viêm mũi dị ứng." }
+        ]},
+      { name: "Bệnh hệ thống Cơ - xương – khớp", weight: 13.64, problems: [
+          { name: "YHHĐ: Thoái hóa cột sống thắt lưng. YHCT: Tý chứng, Yêu thống." },
+          { name: "YHHĐ: Thoái hóa khớp gối. YHCT: Tý chứng, Hạc tất phong." },
+          { name: "YHHĐ: Loãng xương." },
+          { name: "YHHĐ: Viêm khớp dạng thấp. YHCT: Tý chứng." },
+          { name: "YHHĐ: Viêm khớp gout. YHCT: Tý chứng, Thống phong." }
+        ]},
+      { name: "Bệnh hệ thống Thần kinh", weight: 13.64, problems: [
+          { name: "YHHĐ: Di chứng tai biến mạch máu não. YHCT: Bán thân bất toại." },
+          { name: "YHHĐ: Đau đầu. YHCT: Đầu thống, Đàm chứng." },
+          { name: "YHHĐ: Đau thần kinh tọa. YHCT: Yêu thống, Yêu cước thống, Tọa cốt phong, Ma mộc bất nhân." },
+          { name: "YHHĐ: Liệt mặt. YHCT: Khẩu nhãn oa tà." },
+          { name: "YHHĐ: Mất ngủ. YHCT: Thất miên." }
+        ]},
+      { name: "Bệnh hệ thống Nhiễm – Phụ", weight: 9.09, problems: [
+          { name: "YHHĐ: Viêm gan siêu vi. YHCT: Hoàng đản." },
+          { name: "YHHĐ: Sốt xuất huyết Dengue. YHCT: Ôn bệnh." },
+          { name: "YHHĐ: Đau bụng kinh nguyên phát. YHCT: Thống kinh." },
+          { name: "YHHĐ: Rối loạn mãn kinh và chu mãn kinh." }
+        ]},
+      { name: "Bệnh hệ thống Nhi khoa", weight: 4.55, problems: [
+          { name: "YHHĐ: Suy dinh dưỡng ở trẻ em. YHCT: Cam tích." },
+          { name: "YHHĐ: Đái dầm ở trẻ em. YHCT: Dạ niệu." }
+        ]},
+      { name: "Bệnh hệ thống Ngoại khoa - Da liễu", weight: 9.09, problems: [
+          { name: "YHHĐ: Trĩ. YHCT: Hạ trĩ." },
+          { name: "YHHĐ: Sỏi đường niệu. YHCT: Lâm chứng." },
+          { name: "YHHĐ: Mày đay." },
+          { name: "YHHĐ: Mụn trứng cá." }
+        ]}
+    ];
+
+    let clos = [
+      { id: "LO1", name: "Chẩn đoán", desc: "Có khả năng chẩn đoán xác định và phân biệt..." },
+      { id: "LO2", name: "Điều trị", desc: "Lập kế hoạch điều trị và theo dõi..." },
+      { id: "LO3", name: "Dự phòng", desc: "Tư vấn giáo dục sức khỏe..." },
+      { id: "LO4", name: "Cơ chế", desc: "Giải thích cơ chế bệnh sinh..." }
+    ];
+
+    // Configuration Targets (Weights in %)
+    let configTarget = {
+      bloom: { 1: 20, 2: 30, 3: 30, 4: 10, 5: 5, 6: 5 },
+      clo: {}
+    };
+    clos.forEach(c => configTarget.clo[c.id] = 25);
+
+    // Data Structure
+    let appData = [];
+    let currentSystemIdx = 0;
+    let activeCell = { sysIdx: null, probIdx: null, cloId: null };
+    let currentBloomSelection = 1;
+    let currentTab = 'matrix';
+
+    // --- Problem editor state ---
+    let activeProblem = { sysIdx: null, probIdx: null };
+
+    // --- INIT ---
+    function init() {
+      // thử auto-load 1 lần (nếu có cloud)
+      loadFromCloud().catch(() => {});
+
+      // init local data (fallback)
+      appData = initialData.map(cat => ({
+        name: cat.name,
+        weight: cat.weight,
+        problems: cat.problems.map(p => ({
+          name: p.name,
+          weight: 1,
+          matrix: {}
+        }))
+      }));
+
+      renderSidebar();
+      renderMatrix();
+      renderCLOInfo();
+      renderConfig();
+      updateGlobalStats();
+    }
+
+    // --- TAB NAVIGATION ---
+    function switchTab(tab) {
+      currentTab = tab;
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById('tab-' + tab).classList.add('active');
+
+      document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+      document.getElementById('view-' + tab).classList.remove('hidden');
+
+      if (tab === 'matrix') {
+        document.getElementById('matrixHint').style.visibility = 'visible';
+        renderMatrix();
+      } else if (tab === 'clo-info') {
+        document.getElementById('matrixHint').style.visibility = 'hidden';
+        renderCLOInfo();
+      } else {
+        document.getElementById('matrixHint').style.visibility = 'hidden';
+        populateConfigSystemSelect();
+        renderConfig();
+      }
+    }
+
+    // --- RENDER SIDEBAR (UPDATED: show problems + add/edit) ---
+    function renderSidebar() {
+      const list = document.getElementById('sidebarList');
+      list.innerHTML = '';
+
+      appData.forEach((sys, sIdx) => {
+        // tính tổng câu trong hệ
+        let sysQCount = 0;
+        sys.problems.forEach(p => Object.values(p.matrix).forEach(cell => sysQCount += (parseInt(cell.q)||0)));
+
+        // SYSTEM ITEM
+        const sysDiv = document.createElement('div');
+        sysDiv.className = `sidebar-item px-3 py-2 text-sm flex justify-between items-center group ${sIdx === currentSystemIdx ? 'active' : 'text-slate-600'}`;
+
+        sysDiv.innerHTML = `
+          <span class="truncate flex-1" onclick="selectSystem(${sIdx})">${sys.name}</span>
+          <div class="flex items-center gap-2">
+            <span class="text-[10px] bg-slate-200 text-slate-600 px-1.5 rounded-full font-bold" onclick="selectSystem(${sIdx})">${sysQCount}</span>
+
+            <button onclick="addProblemToSystem(${sIdx})" title="Thêm vấn đề" class="sidebar-actions text-blue-400 hover:text-blue-600 hover:bg-blue-50 p-1 rounded transition-colors">
+              <i class="fa-solid fa-plus text-xs"></i>
+            </button>
+
+            <button onclick="deleteSystem(${sIdx})" title="Xóa hệ thống" class="sidebar-actions text-red-400 hover:text-red-600 hover:bg-red-50 p-1 rounded transition-colors">
+              <i class="fa-solid fa-trash-can text-xs"></i>
+            </button>
+          </div>
+        `;
+        list.appendChild(sysDiv);
+
+        // PROBLEM LIST (nested)
+        const sub = document.createElement('div');
+        sub.className = "ml-3 pl-2 border-l border-slate-100 space-y-1 mb-2";
+
+        sys.problems.forEach((prob, pIdx) => {
+          let pCount = 0;
+          Object.values(prob.matrix).forEach(cell => pCount += (parseInt(cell.q)||0));
+
+          const probDiv = document.createElement('div');
+          const isActiveSys = (sIdx === currentSystemIdx);
+
+          probDiv.className = `flex items-center justify-between px-2 py-1 rounded text-xs ${
+            isActiveSys ? 'text-slate-700 hover:bg-slate-50' : 'text-slate-500 hover:bg-slate-50'
+          }`;
+
+          probDiv.innerHTML = `
+            <div class="truncate flex-1 pr-2" title="${prob.name}">
+              <i class="fa-regular fa-circle-dot mr-1 text-slate-300"></i>
+              ${prob.name}
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] bg-slate-100 text-slate-500 px-1.5 rounded-full font-bold" title="Số câu trong vấn đề">${pCount}</span>
+
+              <button onclick="openProblemEditor(event, ${sIdx}, ${pIdx})" title="Chỉnh sửa vấn đề" class="text-slate-400 hover:text-blue-600 hover:bg-blue-50 p-1 rounded transition-colors">
+                <i class="fa-solid fa-pen-to-square text-[11px]"></i>
+              </button>
+            </div>
+          `;
+          sub.appendChild(probDiv);
+        });
+
+        list.appendChild(sub);
+      });
+    }
+
+    function selectSystem(idx) {
+      currentSystemIdx = idx;
+      renderSidebar();
+      if(currentTab === 'matrix') renderMatrix();
+      if(currentTab === 'config') {
+        document.getElementById('configSystemSelect').value = idx;
+        renderConfig();
+      }
+    }
+
+    // --- RENDER MATRIX ---
+    function renderMatrix() {
+      if (appData.length === 0) {
+        document.getElementById('matrixBody').innerHTML = '<tr><td colspan="10" class="p-4 text-center text-slate-500">Chưa có hệ thống nào. Vui lòng thêm mới.</td></tr>';
+        return;
+      }
+
+      const sys = appData[currentSystemIdx];
+      document.getElementById('currentSystemTitle').innerText = sys.name;
+      const thead = document.getElementById('matrixHead');
+      const tbody = document.getElementById('matrixBody');
+
+      let headHtml = `<tr><th class="corner-header">Vấn đề lâm sàng</th>`;
+      clos.forEach(clo => headHtml += `<th style="min-width: 80px;" title="${clo.name}">${clo.id}</th>`);
+      headHtml += `<th style="width: 60px;" class="bg-slate-100">Tổng</th></tr>`;
+      thead.innerHTML = headHtml;
+
+      tbody.innerHTML = '';
+
+      let colTotals = {};
+      clos.forEach(c => colTotals[c.id] = 0);
+      let sysTotal = 0;
+
+      sys.problems.forEach((prob, pIdx) => {
+        const tr = document.createElement('tr');
+        let rowHtml = `<td class="row-header group">
+            <div class="flex justify-between items-start">
+              <div class="text-problem flex-1 mr-2" contenteditable="true" onblur="updateProblemName(${pIdx}, this.innerText)">${prob.name}</div>
+              <button onclick="deleteProblem(${pIdx})" title="Xóa vấn đề" class="row-action-btn text-red-300 hover:text-red-500 pt-0.5">
+                <i class="fa-solid fa-circle-xmark"></i>
+              </button>
+            </div>
+          </td>`;
+        let rowTotal = 0;
+
+        clos.forEach(clo => {
+          const cellData = prob.matrix[clo.id];
+          const hasData = cellData && cellData.q > 0;
+          const bloomClass = hasData ? `bloom-${cellData.bloom}` : 'empty';
+          const content = hasData ? cellData.q : '';
+
+          if(hasData) {
+            const val = parseInt(cellData.q);
+            rowTotal += val;
+            colTotals[clo.id] += val;
+            sysTotal += val;
+          }
+
+          rowHtml += `<td><div class="matrix-cell ${bloomClass}" onclick="openCell(event, ${pIdx}, '${clo.id}')">${content}</div></td>`;
+        });
+
+        rowHtml += `<td class="text-center font-bold text-blue-700 bg-slate-50">${rowTotal}</td>`;
+        tr.innerHTML = rowHtml;
+        tbody.appendChild(tr);
+      });
+
+      const footerTr = document.createElement('tr');
+      footerTr.className = 'footer-row';
+      let footerHtml = `<td class="row-header">TỔNG CỘNG:</td>`;
+      clos.forEach(clo => {
+        const val = colTotals[clo.id];
+        footerHtml += `<td class="text-center">${val > 0 ? val : ''}</td>`;
+      });
+      footerHtml += `<td class="text-center text-lg">${sysTotal}</td>`;
+      footerTr.innerHTML = footerHtml;
+      tbody.appendChild(footerTr);
+
+      const addRow = document.createElement('tr');
+      addRow.innerHTML = `<td colspan="${clos.length + 2}" class="p-2 text-center">
+          <button onclick="addProblem()" class="text-blue-600 hover:text-blue-800 text-xs font-bold uppercase"><i class="fa-solid fa-plus"></i> Thêm vấn đề</button>
+        </td>`;
+      tbody.appendChild(addRow);
+    }
+
+    // --- SYSTEM & PROBLEM MANAGEMENT ---
+    function addSystem() {
+      const name = prompt("Nhập tên hệ thống mới:", "Hệ thống mới");
+      if (name) {
+        appData.push({
+          name: name,
+          weight: 10,
+          problems: [{ name: "Vấn đề 1...", weight: 1, matrix: {} }]
+        });
+        currentSystemIdx = appData.length - 1;
+        renderSidebar();
+        renderMatrix();
+        renderConfig();
+        updateGlobalStats();
+        autoSaveDebounced();
+      }
+    }
+
+    function deleteSystem(idx) {
+      if(confirm(`Bạn có chắc muốn xóa hệ thống "${appData[idx].name}" không?`)) {
+        appData.splice(idx, 1);
+        if (appData.length === 0) {
+          currentSystemIdx = 0;
+        } else if (currentSystemIdx >= appData.length) {
+          currentSystemIdx = appData.length - 1;
+        }
+        renderSidebar();
+        renderMatrix();
+        renderConfig();
+        updateGlobalStats();
+        autoSaveDebounced();
+      }
+    }
+
+    function updateProblemName(pIdx, val) {
+      if(appData[currentSystemIdx] && appData[currentSystemIdx].problems[pIdx]) {
+        appData[currentSystemIdx].problems[pIdx].name = (val || '').trim();
+        renderConfig();
+        renderSidebar();
+        autoSaveDebounced();
+      }
+    }
+
+    function addProblem() {
+      if (appData.length === 0) return;
+      appData[currentSystemIdx].problems.push({ name: "Vấn đề mới...", weight: 1, matrix: {} });
+      renderMatrix();
+      renderConfig();
+      renderSidebar();
+      updateGlobalStats();
+      autoSaveDebounced();
+    }
+
+    function deleteProblem(pIdx) {
+      const probName = appData[currentSystemIdx].problems[pIdx].name;
+      if(confirm(`Xóa vấn đề: "${probName}"?`)) {
+        appData[currentSystemIdx].problems.splice(pIdx, 1);
+        renderMatrix();
+        renderConfig();
+        renderSidebar();
+        updateGlobalStats();
+        autoSaveDebounced();
+      }
+    }
+
+    // --- RENDER CLO INFO ---
+    function renderCLOInfo() {
+      const tbody = document.getElementById('cloInfoBody');
+      tbody.innerHTML = '';
+      clos.forEach((clo, idx) => {
+        const tr = document.createElement('tr');
+        tr.className = "border-b border-slate-100 hover:bg-slate-50";
+        tr.innerHTML = `
+          <td class="px-4 py-3 font-bold text-blue-600">${clo.id}</td>
+          <td class="px-4 py-3">
+            <input type="text" value="${clo.name}"
+              onchange="updateCLOData(${idx}, 'name', this.value)"
+              class="w-full bg-transparent border-b border-dashed border-slate-300 outline-none">
+          </td>
+          <td class="px-4 py-3">
+            <textarea onchange="updateCLOData(${idx}, 'desc', this.value)" class="clo-desc-input" rows="2">${clo.desc || ''}</textarea>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function updateCLOData(idx, field, val) {
+      clos[idx][field] = val;
+      if(field === 'name') renderMatrix();
+      renderConfig();
+      autoSaveDebounced();
+    }
+
+    // --- RENDER CONFIG & LIVE MONITOR ---
+    function populateConfigSystemSelect() {
+      const sel = document.getElementById('configSystemSelect');
+      sel.innerHTML = '';
+      appData.forEach((sys, idx) => {
+        const opt = document.createElement('option');
+        opt.value = idx;
+        opt.text = sys.name;
+        if(idx === currentSystemIdx) opt.selected = true;
+        sel.appendChild(opt);
+      });
+    }
+
+    function changeConfigSystem(val) {
+      currentSystemIdx = parseInt(val);
+      renderConfig();
+    }
+
+    function renderConfig() {
+      if (appData.length === 0) return;
+      const currentSys = appData[currentSystemIdx];
+      const stats = calculateActualStats();
+
+      document.getElementById('systemWeightInput').value = currentSys.weight;
+      const sysActual = stats.systemPercents[currentSystemIdx] || 0;
+      document.getElementById('systemActualPercent').innerText = sysActual + '%';
+      document.getElementById('systemActualBar').style.width = sysActual + '%';
+
+      const probList = document.getElementById('problemWeightList');
+      probList.innerHTML = '';
+
+      const sysRelWeightTotal = currentSys.problems.reduce((a,b) => a + (b.weight||0), 0);
+
+      currentSys.problems.forEach((prob, pIdx) => {
+        const w = prob.weight || 0;
+        const expectedShare = sysRelWeightTotal ? (w/sysRelWeightTotal)*100 : 0;
+        const sysTotalQ = stats.systemCounts[currentSystemIdx] || 1;
+        const probQ = stats.problemCounts[`${currentSystemIdx}-${pIdx}`] || 0;
+        const probActual = Math.round((probQ / sysTotalQ) * 100);
+
+        probList.innerHTML += `
+          <div class="flex flex-col mb-3 pb-3 border-b border-slate-50">
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex-1 font-medium text-slate-700 text-sm" title="${prob.name}">${prob.name}</div>
+              <div class="flex items-center gap-1">
+                <span class="text-[10px] text-slate-400 mr-1">Trọng số:</span>
+                <input type="number" value="${w}" onchange="updateProblemWeight(${pIdx}, this.value)" class="config-input w-14 text-right font-bold text-slate-700" placeholder="1">
+              </div>
+            </div>
+            <div class="mt-1">
+              <div class="flex justify-between text-[10px] text-slate-400">
+                <span>Thực tế (trong hệ): <b>${probActual}%</b> (Mục tiêu: ~${Math.round(expectedShare)}%)</span>
+              </div>
+              <div class="monitor-bar-bg h-1">
+                <div class="monitor-bar-fill ${Math.abs(probActual - expectedShare) > 10 ? 'bg-red-400':'bg-emerald-400'}" style="width: ${Math.min(probActual, 100)}%"></div>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      const bloomList = document.getElementById('bloomConfigList');
+      bloomList.innerHTML = '';
+      let bloomTargetTotal = 0;
+      [1,2,3,4,5,6].forEach(lvl => {
+        const target = configTarget.bloom[lvl] || 0;
+        const actual = stats.bloomPercents[lvl] || 0;
+        bloomTargetTotal += parseInt(target);
+
+        bloomList.innerHTML += `
+          <div class="p-2 bg-slate-50 rounded border border-slate-100">
+            <div class="flex justify-between mb-1">
+              <div class="text-xs font-bold text-slate-600">Mức ${lvl}</div>
+              <div class="flex items-center">
+                <input type="number" value="${target}" onchange="updateConfig('bloom', ${lvl}, this.value)" class="config-input w-10 py-0 text-center text-xs font-bold">
+                <span class="text-[10px] ml-1">%</span>
+              </div>
+            </div>
+            <div class="monitor-bar-bg">
+              <div class="monitor-bar-fill ${Math.abs(actual - target) > 5 ? 'bg-red-500':'bg-purple-500'}" style="width: ${Math.min(actual, 100)}%"></div>
+            </div>
+            <div class="text-[10px] text-right mt-1 text-slate-500">Thực tế: <b>${actual}%</b></div>
+          </div>
+        `;
+      });
+      document.getElementById('bloomTotalSum').innerText = bloomTargetTotal + '%';
+
+      const cloList = document.getElementById('cloConfigList');
+      cloList.innerHTML = '';
+      let cloTargetTotal = 0;
+      clos.forEach(clo => {
+        const target = configTarget.clo[clo.id] || 0;
+        const actual = stats.cloPercents[clo.id] || 0;
+        cloTargetTotal += parseInt(target);
+
+        cloList.innerHTML += `
+          <div class="flex items-center gap-3">
+            <div class="w-16 text-sm font-medium text-slate-600">${clo.id}</div>
+            <div class="flex-1">
+              <div class="flex justify-between items-center mb-1">
+                <div class="monitor-bar-bg flex-1 mr-2">
+                  <div class="monitor-bar-fill ${Math.abs(actual - target) > 5 ? 'bg-orange-500':'bg-emerald-500'}" style="width: ${Math.min(actual, 100)}%"></div>
+                </div>
+                <span class="text-[10px] font-bold text-slate-500 w-8 text-right">${actual}%</span>
+              </div>
+            </div>
+            <input type="number" value="${target}" onchange="updateConfig('clo', '${clo.id}', this.value)" class="config-input text-slate-700 font-bold">
+          </div>
+        `;
+      });
+      document.getElementById('cloTotalSum').innerText = cloTargetTotal + '%';
+    }
+
+    function updateConfig(type, id, value) {
+      if (type === 'bloom') configTarget.bloom[id] = parseInt(value) || 0;
+      else configTarget.clo[id] = parseInt(value) || 0;
+      renderConfig();
+      autoSaveDebounced();
+    }
+
+    function updateSystemWeight(val) {
+      appData[currentSystemIdx].weight = parseFloat(val) || 0;
+      renderConfig();
+      autoSaveDebounced();
+    }
+
+    function updateProblemWeight(pIdx, val) {
+      appData[currentSystemIdx].problems[pIdx].weight = parseInt(val) || 0;
+      renderConfig();
+      autoSaveDebounced();
+    }
+
+    // --- LOGIC: AUTO GENERATOR ---
+    function runAutoGenerator() {
+      const totalQ = parseInt(document.getElementById('autoTotalQ').value) || 100;
+      if(!confirm("Hệ thống sẽ xóa dữ liệu hiện tại và tạo mới dựa trên cấu hình tỉ trọng. Tiếp tục?")) return;
+
+      appData.forEach(sys => sys.problems.forEach(p => p.matrix = {}));
+
+      let bloomDeck = [];
+      Object.keys(configTarget.bloom).forEach(lvl => {
+        const count = Math.round(totalQ * (configTarget.bloom[lvl] / 100));
+        for(let i=0; i<count; i++) bloomDeck.push(parseInt(lvl));
+      });
+      while(bloomDeck.length < totalQ) bloomDeck.push(Math.floor(Math.random() * 6) + 1);
+      bloomDeck = shuffle(bloomDeck);
+
+      let cloDeck = [];
+      clos.forEach(clo => {
+        const count = Math.round(totalQ * (configTarget.clo[clo.id] / 100));
+        for(let i=0; i<count; i++) cloDeck.push(clo.id);
+      });
+      while(cloDeck.length < totalQ) cloDeck.push(clos[Math.floor(Math.random()*clos.length)].id);
+      cloDeck = shuffle(cloDeck);
+
+      const totalSysWeight = appData.reduce((acc, sys) => acc + (parseFloat(sys.weight)||0), 0);
+      let currentQCount = 0;
+
+      appData.forEach(sys => {
+        if (!sys.weight) return;
+        let sysTargetQ = (parseFloat(sys.weight) / totalSysWeight) * totalQ;
+
+        const totalProbWeight = sys.problems.reduce((acc, p) => acc + (parseFloat(p.weight)||0), 0);
+
+        sys.problems.forEach(prob => {
+          if(!prob.weight) return;
+          let probTargetQ = (parseFloat(prob.weight) / totalProbWeight) * sysTargetQ;
+
+          let count = Math.floor(probTargetQ);
+          if (Math.random() < (probTargetQ - count)) count++;
+
+          for(let k=0; k<count; k++) {
+            if (currentQCount >= totalQ) break;
+
+            if (cloDeck.length === 0) cloDeck.push(clos[Math.floor(Math.random()*clos.length)].id);
+            if (bloomDeck.length === 0) bloomDeck.push(Math.floor(Math.random() * 6) + 1);
+
+            const cloId = cloDeck.pop();
+            const bloomLvl = bloomDeck.pop();
+
+            if (!prob.matrix[cloId]) prob.matrix[cloId] = { q: 0, bloom: bloomLvl };
+            prob.matrix[cloId].q += 1;
+            currentQCount++;
+          }
+        });
+      });
+
+      renderMatrix();
+      renderSidebar();
+      updateGlobalStats();
+      renderConfig();
+      autoSaveDebounced();
+      alert(`Đã tạo xong ma trận với ${currentQCount} câu hỏi dựa trên tỉ trọng cấu hình!`);
+    }
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function calculateActualStats() {
+      let total = 0;
+      let bloomCounts = {1:0, 2:0, 3:0, 4:0, 5:0, 6:0};
+      let cloCounts = {};
+      let systemCounts = {};
+      let problemCounts = {};
+
+      clos.forEach(c => cloCounts[c.id] = 0);
+
+      appData.forEach((sys, sIdx) => {
+        systemCounts[sIdx] = 0;
+        sys.problems.forEach((prob, pIdx) => {
+          let pCount = 0;
+          Object.entries(prob.matrix).forEach(([cloId, cell]) => {
+            const q = parseInt(cell.q) || 0;
+            if(q > 0) {
+              total += q;
+              pCount += q;
+              systemCounts[sIdx] += q;
+              if(cloCounts[cloId] !== undefined) cloCounts[cloId] += q;
+              if(cell.bloom) bloomCounts[cell.bloom] += q;
+            }
+          });
+          problemCounts[`${sIdx}-${pIdx}`] = pCount;
+        });
+      });
+
+      let bloomPercents = {};
+      Object.keys(bloomCounts).forEach(k => bloomPercents[k] = total ? Math.round((bloomCounts[k]/total)*100) : 0);
+
+      let cloPercents = {};
+      Object.keys(cloCounts).forEach(k => cloPercents[k] = total ? Math.round((cloCounts[k]/total)*100) : 0);
+
+      let systemPercents = {};
+      Object.keys(systemCounts).forEach(k => systemPercents[k] = total ? ((systemCounts[k]/total)*100).toFixed(2) : 0);
+
+      return { total, bloomPercents, cloPercents, systemPercents, systemCounts, problemCounts };
+    }
+
+    // --- EDITOR LOGIC ---
+    function openCell(e, pIdx, cloId) {
+      e.stopPropagation();
+      activeCell = { sysIdx: currentSystemIdx, probIdx: pIdx, cloId: cloId };
+      const cellData = appData[currentSystemIdx].problems[pIdx].matrix[cloId] || { q: '', bloom: 1 };
+
+      document.getElementById('editorQ').value = cellData.q;
+      selectBloom(cellData.bloom || 1);
+
+      const editor = document.getElementById('cellEditor');
+      const rect = e.target.getBoundingClientRect();
+      editor.style.display = 'block';
+      editor.style.top = (rect.bottom + 5) + 'px';
+      editor.style.left = (rect.left - 20) + 'px';
+      if(rect.left + 220 > window.innerWidth) editor.style.left = (window.innerWidth - 240) + 'px';
+      document.getElementById('editorQ').focus();
+    }
+
+    function selectBloom(lvl) {
+      currentBloomSelection = lvl;
+      document.querySelectorAll('.bloom-opt').forEach(el => el.classList.remove('selected'));
+      const el = document.getElementById('b-opt-' + lvl);
+      if(el) el.classList.add('selected');
+    }
+
+    function saveCell() {
+      const qVal = parseInt(document.getElementById('editorQ').value);
+      const prob = appData[activeCell.sysIdx].problems[activeCell.probIdx];
+      if (qVal > 0) prob.matrix[activeCell.cloId] = { q: qVal, bloom: currentBloomSelection };
+      else delete prob.matrix[activeCell.cloId];
+
+      closeEditor();
+      renderMatrix();
+      renderSidebar();
+      updateGlobalStats();
+      renderConfig();
+      autoSaveDebounced();
+    }
+
+    function clearCell() {
+      document.getElementById('editorQ').value = '';
+      saveCell();
+    }
+
+    function closeEditor() {
+      document.getElementById('cellEditor').style.display = 'none';
+    }
+
+    // --- EXPORT LOGIC ---
+    function exportRealExcel() {
+      if (!confirm("Xuất file Excel với dữ liệu hiện tại?")) return;
+
+      const ws_data = [];
+      const headers = ["STT", "Hệ thống / Vấn đề lâm sàng", ...clos.map(c => c.id), "Tổng"];
+      ws_data.push(headers);
+
+      let grandTotal = 0;
+      const colTotals = new Array(clos.length).fill(0);
+
+      appData.forEach((sys, sIdx) => {
+        const sysRow = [`${sIdx + 1}`, sys.name.toUpperCase()];
+        for(let i=0; i<clos.length; i++) sysRow.push("");
+        sysRow.push(0);
+
+        const sysRowIdx = ws_data.push(sysRow) - 1;
+        let sysSum = 0;
+
+        sys.problems.forEach((prob, pIdx) => {
+          const row = [`${sIdx + 1}.${pIdx + 1}`, prob.name];
+          let rowSum = 0;
+
+          clos.forEach((clo, cIdx) => {
+            const cell = prob.matrix[clo.id];
+            if (cell && cell.q > 0) {
+              row.push(cell.q);
+              rowSum += parseInt(cell.q);
+              colTotals[cIdx] += parseInt(cell.q);
+            } else {
+              row.push("");
+            }
+          });
+
+          row.push(rowSum);
+          sysSum += rowSum;
+          ws_data.push(row);
+        });
+
+        ws_data[sysRowIdx][ws_data[sysRowIdx].length - 1] = sysSum;
+        grandTotal += sysSum;
+      });
+
+      const footer = ["", "TỔNG CỘNG", ...colTotals, grandTotal];
+      ws_data.push(footer);
+
+      const info_data = [];
+      info_data.push(["THÔNG SỐ CẤU HÌNH & THỐNG KÊ", ""]);
+      info_data.push(["Tổng số câu hỏi:", grandTotal]);
+      info_data.push(["", ""]);
+      info_data.push(["MỤC TIÊU BLOOM (Target)", "%"]);
+      Object.entries(configTarget.bloom).forEach(([k, v]) => info_data.push([`Mức ${k}`, v]));
+      info_data.push(["", ""]);
+      info_data.push(["MỤC TIÊU CLO (Target)", "%"]);
+      clos.forEach(c => info_data.push([c.id, configTarget.clo[c.id]]));
+
+      const wb = XLSX.utils.book_new();
+
+      const ws1 = XLSX.utils.aoa_to_sheet(ws_data);
+      ws1['!cols'] = [{wch: 6}, {wch: 50}, ...clos.map(()=>({wch: 10})), {wch: 8}];
+      XLSX.utils.book_append_sheet(wb, ws1, "Ma trận");
+
+      const ws2 = XLSX.utils.aoa_to_sheet(info_data);
+      ws2['!cols'] = [{wch: 30}, {wch: 10}];
+      XLSX.utils.book_append_sheet(wb, ws2, "Cấu hình");
+
+      XLSX.writeFile(wb, "Matrix_Blueprint_Export.xlsx");
+    }
+
+    function downloadTemplate() {
+      const assetLink = "assets/form test blueprint - trong so 5.2.2026.xlsx";
+      const link = document.createElement('a');
+      link.href = assetLink;
+      link.download = 'Template_Form.xlsx';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function addCLO() {
+      const id = prompt("Nhập mã CLO mới:");
+      if(id) {
+        const newId = id.toUpperCase();
+        clos.push({ id: newId, name: id, desc: "" });
+        configTarget.clo[newId] = 0;
+        renderMatrix();
+        renderConfig();
+        renderCLOInfo();
+        autoSaveDebounced();
+      }
+    }
+
+    function updateGlobalStats() {
+      document.getElementById('totalQuestionsDisplay').innerText = calculateActualStats().total;
+    }
+
+    // =========================
+    // ==== SIDEBAR PROBLEM ====
+    // =========================
+    function addProblemToSystem(sysIdx) {
+      const sys = appData[sysIdx];
+      const name = prompt(`Thêm vấn đề cho hệ "${sys.name}":`, "Vấn đề mới...");
+      if (!name) return;
+
+      sys.problems.push({ name: name, weight: 1, matrix: {} });
+
+      currentSystemIdx = sysIdx;
+
+      renderSidebar();
+      if (currentTab === 'matrix') renderMatrix();
+      renderConfig();
+      updateGlobalStats();
+      autoSaveDebounced();
+    }
+
+    function openProblemEditor(e, sysIdx, probIdx) {
+      e.stopPropagation();
+      activeProblem = { sysIdx, probIdx };
+
+      const sys = appData[sysIdx];
+      const prob = sys.problems[probIdx];
+
+      document.getElementById('peSystemName').innerText = sys.name;
+      document.getElementById('peProblemIndex').innerText = `#${sysIdx + 1}.${probIdx + 1}`;
+
+      document.getElementById('peName').value = prob.name || '';
+      document.getElementById('peWeight').value = (prob.weight ?? 1);
+
+      const editor = document.getElementById('problemEditor');
+      editor.style.display = 'block';
+
+      const rect = e.target.getBoundingClientRect();
+      editor.style.top = (rect.bottom + 8) + 'px';
+      editor.style.left = Math.min(rect.left - 250, window.innerWidth - 340) + 'px';
+      if (parseFloat(editor.style.left) < 10) editor.style.left = "10px";
+
+      document.getElementById('peName').focus();
+    }
+
+    function closeProblemEditor() {
+      document.getElementById('problemEditor').style.display = 'none';
+    }
+
+    function saveProblemEditor() {
+      const { sysIdx, probIdx } = activeProblem;
+      if (sysIdx === null || probIdx === null) return;
+
+      const sys = appData[sysIdx];
+      const prob = sys.problems[probIdx];
+
+      const newName = (document.getElementById('peName').value || '').trim();
+      const newWeight = parseInt(document.getElementById('peWeight').value);
+
+      if (newName) prob.name = newName;
+      prob.weight = Number.isFinite(newWeight) ? newWeight : (prob.weight ?? 1);
+
+      closeProblemEditor();
+
+      renderSidebar();
+      if (sysIdx === currentSystemIdx && currentTab === 'matrix') renderMatrix();
+      renderConfig();
+      updateGlobalStats();
+      autoSaveDebounced();
+    }
+
+    function deleteProblemFromEditor() {
+      const { sysIdx, probIdx } = activeProblem;
+      if (sysIdx === null || probIdx === null) return;
+
+      const sys = appData[sysIdx];
+      const probName = sys.problems[probIdx]?.name || "Vấn đề";
+
+      if (!confirm(`Xóa vấn đề: "${probName}"?`)) return;
+
+      sys.problems.splice(probIdx, 1);
+      closeProblemEditor();
+
+      renderSidebar();
+      if (sysIdx === currentSystemIdx && currentTab === 'matrix') renderMatrix();
+      renderConfig();
+      updateGlobalStats();
+      autoSaveDebounced();
+    }
+
+    // --- Click outside: close editors ---
+    document.addEventListener('click', (e) => {
+      // cell editor close
+      const cellEd = document.getElementById('cellEditor');
+      if (cellEd.style.display === 'block' && !cellEd.contains(e.target) && !e.target.classList.contains('matrix-cell')) {
+        closeEditor();
+      }
+
+      // problem editor close
+      const pe = document.getElementById('problemEditor');
+      if (pe && pe.style.display === 'block' && !pe.contains(e.target)) {
+        closeProblemEditor();
+      }
+    });
+
+    init();
+  </script>
 </body>
 </html>
