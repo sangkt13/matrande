@@ -95,6 +95,7 @@
     .matrix-cell{
       width:100%;height:100%;display:flex;align-items:center;justify-content:center;
       cursor:pointer;font-weight:800;font-size:14px;transition:all .15s;
+      user-select:none;
     }
     .matrix-cell:hover{filter:brightness(.95);box-shadow:inset 0 0 0 2px #94A3B8}
     .matrix-cell.empty{background:transparent;color:transparent}
@@ -162,6 +163,43 @@
     /* Lock button UI (Cell editor) */
     .lock-on  { background:#FEE2E2; color:#B91C1C; border-color:#FECACA; }
     .lock-off { background:#F1F5F9; color:#334155; border-color:#E2E8F0; }
+
+    /* NEW: Cell locked overlay icon */
+    .matrix-cell.locked{
+      position:relative;
+      opacity:0.55;
+      filter:grayscale(0.2);
+    }
+    .matrix-cell.locked::after{
+      content:"\f023"; /* fa-lock */
+      font-family:"Font Awesome 6 Free";
+      font-weight:900;
+      position:absolute;
+      top:4px; right:6px;
+      font-size:10px;
+      color:#ef4444;
+      pointer-events:none;
+    }
+
+    /* NEW: tiny toast */
+    #toast{
+      position:fixed;
+      left:50%;
+      bottom:18px;
+      transform:translateX(-50%);
+      background:#0f172a;
+      color:#fff;
+      padding:10px 12px;
+      border-radius:999px;
+      font-size:12px;
+      box-shadow:0 10px 20px rgba(0,0,0,.2);
+      z-index:200;
+      display:none;
+      max-width:90vw;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
   </style>
 </head>
 
@@ -244,7 +282,7 @@
           <i class="fa-solid fa-folder-plus mr-1"></i> Thêm Hệ Thống
         </button>
         <button onclick="openCLOManager()" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded text-xs font-bold transition-colors">
-          <i class="fa-solid fa-bullseye mr-1"></i> Quản lý CLO (Thêm/Sửa/Xóa/Khóa)
+          <i class="fa-solid fa-bullseye mr-1"></i> Quản lý CLO (Thêm/Sửa/Xóa)
         </button>
       </div>
     </aside>
@@ -269,7 +307,7 @@
         </div>
 
         <div class="text-xs text-slate-400 italic" id="matrixHint">
-          * Bấm vào tên để sửa. Chọn ô để nhập điểm.
+          * Bấm vào tên để sửa. Chọn ô để nhập điểm. Chuột phải lên ô để khóa/mở khóa nhanh.
         </div>
       </div>
 
@@ -332,7 +370,7 @@
                   Hệ thống sẽ rải câu hỏi dựa trên <b>Tỉ trọng %</b> của các Hệ thống & Vấn đề đã cấu hình.
                   <br/>
                   <span class="text-xs">
-                    * CLO nào <b>đang khóa</b> sẽ bị loại khỏi danh sách rải tự động.
+                    * CLO có target toàn bài. Khóa/mở theo từng VẤN ĐỀ dùng chuột phải lên ô hoặc nút khóa trong editor.
                   </span>
                 </p>
               </div>
@@ -418,7 +456,7 @@
                       </span>
                       Mục tiêu CLO (Toàn bài)
                     </div>
-                    <span class="text-xs text-slate-400">* có thể khóa CLO</span>
+                    <span class="text-xs text-slate-400">* Khóa theo VẤN ĐỀ: chuột phải vào ô</span>
                   </h3>
 
                   <div class="space-y-4" id="cloConfigList"></div>
@@ -429,6 +467,7 @@
                   </div>
                 </div>
               </div>
+
             </div>
           </div>
         </div>
@@ -441,7 +480,7 @@
                 <span class="w-8 h-8 rounded bg-slate-100 text-slate-700 flex items-center justify-center mr-2">
                   <i class="fa-solid fa-gear"></i>
                 </span>
-                Quản lý CLO (Thêm / Sửa / Xóa / Khóa)
+                Quản lý CLO (Thêm / Sửa / Xóa)
               </h3>
 
               <button onclick="addCLOPrompt()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-sm font-bold">
@@ -457,7 +496,6 @@
                     <th class="px-3 py-3 w-56">Tên ngắn</th>
                     <th class="px-3 py-3">Mô tả</th>
                     <th class="px-3 py-3 w-32 text-center">Target (%)</th>
-                    <th class="px-3 py-3 w-28 text-center">Khóa</th>
                     <th class="px-3 py-3 w-28 text-center">Xóa</th>
                   </tr>
                 </thead>
@@ -466,7 +504,7 @@
             </div>
 
             <div class="mt-4 text-xs text-slate-500">
-              * CLO bị <b>khóa</b>: auto-gen sẽ <b>không</b> rải câu vào CLO đó. Bạn vẫn có thể nhập tay trong ma trận.
+              * Khóa CLO theo từng <b>VẤN ĐỀ</b>: chuột phải lên ô tương ứng trong ma trận.
             </div>
           </div>
         </div>
@@ -481,11 +519,11 @@
       <div class="flex items-center gap-2">
         <span class="text-xs font-bold text-slate-500 uppercase">Cấu hình ô</span>
 
-        <!-- NEW: Lock CLO button in cell editor -->
+        <!-- Lock button (per-problem/per-cell) -->
         <button id="editorLockBtn"
                 onclick="toggleLockFromCellEditor()"
                 class="hidden border px-2 py-1 rounded text-xs font-bold hover:opacity-80 lock-off"
-                title="Khóa CLO để auto-gen không rải vào CLO này">
+                title="Khóa CLO theo từng vấn đề (row) để auto-gen không rải vào ô này">
           <i id="editorLockIcon" class="fa-solid fa-lock-open mr-1"></i>
           <span id="editorLockText">Mở</span>
         </button>
@@ -521,6 +559,9 @@
     </div>
   </div>
 
+  <!-- NEW: Toast -->
+  <div id="toast"></div>
+
   <script>
     // =========================
     // ========== CLOUD =========
@@ -551,12 +592,17 @@
       configTarget = configTarget || {};
       configTarget.bloom = configTarget.bloom || {1:20,2:30,3:30,4:10,5:5,6:5};
       configTarget.clo = configTarget.clo || {};
-      configTarget.cloLock = configTarget.cloLock || {};
 
       // ensure all CLO keys exist
       clos.forEach(c=>{
         if(configTarget.clo[c.id] === undefined) configTarget.clo[c.id] = 0;
-        if(configTarget.cloLock[c.id] === undefined) configTarget.cloLock[c.id] = false;
+      });
+
+      // ensure per-problem locks exist
+      (appData || []).forEach(sys=>{
+        (sys.problems || []).forEach(prob=>{
+          if(!prob.cloLock) prob.cloLock = {};
+        });
       });
 
       // clamp idx
@@ -712,12 +758,10 @@
     // Configuration Targets (Weights in %)
     let configTarget = {
       bloom: {1:20,2:30,3:30,4:10,5:5,6:5},
-      clo: {},
-      cloLock: {} // NEW: lock flags for CLO columns
+      clo: {}
     };
     clos.forEach(c=>{
       configTarget.clo[c.id] = 25;
-      configTarget.cloLock[c.id] = false;
     });
 
     // Data structure
@@ -726,6 +770,45 @@
     let activeCell = { sysIdx:null, probIdx:null, cloId:null };
     let currentBloomSelection = 1;
     let currentTab = 'matrix';
+
+    // =========================
+    // ====== HELPERS ==========
+    // =========================
+    function escapeHtml(str){
+      return String(str ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    function ensureProblemLock(prob){
+      if(!prob) return;
+      if(!prob.cloLock) prob.cloLock = {};
+    }
+
+    function isCellLocked(prob, cloId){
+      ensureProblemLock(prob);
+      return !!prob.cloLock[cloId];
+    }
+
+    function toggleCellLock(prob, cloId){
+      ensureProblemLock(prob);
+      prob.cloLock[cloId] = !prob.cloLock[cloId];
+      return !!prob.cloLock[cloId];
+    }
+
+    // toast
+    let _toastTimer = null;
+    function showToast(message){
+      const el = document.getElementById("toast");
+      if(!el) return;
+      el.innerText = message;
+      el.style.display = "block";
+      if(_toastTimer) clearTimeout(_toastTimer);
+      _toastTimer = setTimeout(()=>{ el.style.display = "none"; }, 1200);
+    }
 
     // --- INIT ---
     function init(){
@@ -736,7 +819,12 @@
       appData = initialData.map(cat=>({
         name:cat.name,
         weight:cat.weight,
-        problems:cat.problems.map(p=>({ name:p.name, weight:1, matrix:{} }))
+        problems:cat.problems.map(p=>({
+          name:p.name,
+          weight:1,
+          matrix:{},
+          cloLock:{} // NEW: lock per-problem/per-cell
+        }))
       }));
 
       renderSidebar();
@@ -794,7 +882,7 @@
         const div = document.createElement('div');
         div.className = `sidebar-item px-3 py-2 text-sm flex justify-between items-center group ${idx === currentSystemIdx ? 'active':'text-slate-600'}`;
         div.innerHTML = `
-          <span class="truncate flex-1" onclick="selectSystem(${idx})">${sys.name}</span>
+          <span class="truncate flex-1" onclick="selectSystem(${idx})">${escapeHtml(sys.name)}</span>
           <div class="flex items-center gap-2">
             <span class="text-[10px] bg-slate-200 text-slate-600 px-1.5 rounded-full font-bold" onclick="selectSystem(${idx})">${qCount}</span>
             <button onclick="deleteSystem(${idx})" title="Xóa hệ thống"
@@ -819,6 +907,30 @@
       }
     }
 
+    // =========================
+    // ====== RIGHT CLICK LOCK ==
+    // =========================
+    // NEW: right-click on cell to toggle lock quickly (no editor)
+    function onCellRightClick(e, pIdx, cloId){
+      e.preventDefault();
+      e.stopPropagation();
+
+      const prob = appData?.[currentSystemIdx]?.problems?.[pIdx];
+      if(!prob) return;
+
+      const locked = toggleCellLock(prob, cloId);
+
+      // if just locked, optional: remove auto-gen future fill but keep current q
+      // -> giữ dữ liệu hiện tại, chỉ "khóa" để AutoGen tránh
+
+      renderMatrix();
+      renderConfig();
+      renderSidebar();
+      autoSaveDebounced();
+
+      showToast(locked ? `🔒 Đã khóa ${cloId} cho vấn đề này` : `🔓 Đã mở ${cloId} cho vấn đề này`);
+    }
+
     // --- RENDER MATRIX ---
     function renderMatrix(){
       const thead = document.getElementById('matrixHead');
@@ -831,10 +943,8 @@
 
       // ensure configTarget keys exist
       configTarget.clo = configTarget.clo || {};
-      configTarget.cloLock = configTarget.cloLock || {};
       clos.forEach(c=>{
         if(configTarget.clo[c.id] === undefined) configTarget.clo[c.id] = 0;
-        if(configTarget.cloLock[c.id] === undefined) configTarget.cloLock[c.id] = false;
       });
 
       const sys = appData[currentSystemIdx];
@@ -842,12 +952,10 @@
 
       let headHtml = `<tr><th class="corner-header">Vấn đề lâm sàng</th>`;
       clos.forEach(clo=>{
-        const locked = !!configTarget.cloLock[clo.id];
         headHtml += `
-          <th style="min-width: 80px;" title="${clo.name}${locked ? ' (ĐANG KHÓA - AutoGen bỏ qua)' : ''}">
+          <th style="min-width: 80px;" title="${escapeHtml(clo.name)}">
             <div class="flex items-center justify-center gap-1">
-              <span>${clo.id}</span>
-              ${locked ? `<i class="fa-solid fa-lock text-[10px] text-red-500"></i>` : ``}
+              <span>${escapeHtml(clo.id)}</span>
             </div>
           </th>
         `;
@@ -862,13 +970,15 @@
       let sysTotal = 0;
 
       sys.problems.forEach((prob, pIdx)=>{
+        ensureProblemLock(prob);
+
         const tr = document.createElement('tr');
 
         let rowHtml = `
           <td class="row-header group">
             <div class="flex justify-between items-start">
               <div class="text-problem flex-1 mr-2" contenteditable="true"
-                   onblur="updateProblemName(${pIdx}, this.innerText)">${prob.name}</div>
+                   onblur="updateProblemName(${pIdx}, this.innerText)">${escapeHtml(prob.name)}</div>
               <button onclick="deleteProblem(${pIdx})" title="Xóa vấn đề"
                       class="row-action-btn text-red-300 hover:text-red-500 pt-0.5">
                 <i class="fa-solid fa-circle-xmark"></i>
@@ -880,6 +990,8 @@
         let rowTotal = 0;
 
         clos.forEach(clo=>{
+          const locked = !!prob.cloLock?.[clo.id];
+
           const cellData = prob.matrix[clo.id];
           const hasData = cellData && (parseInt(cellData.q)||0) > 0;
           const bloomClass = hasData ? `bloom-${cellData.bloom}` : 'empty';
@@ -894,7 +1006,11 @@
 
           rowHtml += `
             <td>
-              <div class="matrix-cell ${bloomClass}" onclick="openCell(event, ${pIdx}, '${clo.id}')">${content}</div>
+              <div class="matrix-cell ${bloomClass} ${locked ? 'locked' : ''}"
+                   onclick="openCell(event, ${pIdx}, '${clo.id}')"
+                   oncontextmenu="onCellRightClick(event, ${pIdx}, '${clo.id}')"
+                   title="${locked ? 'LOCK (AutoGen bỏ qua ô này) - Chuột phải để mở' : 'Chuột phải để khóa ô này (AutoGen sẽ bỏ qua)'}"
+              >${content}</div>
             </td>
           `;
         });
@@ -937,7 +1053,7 @@
       appData.push({
         name:name,
         weight:10,
-        problems:[{ name:"Vấn đề 1...", weight:1, matrix:{} }]
+        problems:[{ name:"Vấn đề 1...", weight:1, matrix:{}, cloLock:{} }]
       });
 
       currentSystemIdx = appData.length - 1;
@@ -976,7 +1092,7 @@
 
     function addProblem(){
       if(appData.length === 0) return;
-      appData[currentSystemIdx].problems.push({ name:"Vấn đề mới...", weight:1, matrix:{} });
+      appData[currentSystemIdx].problems.push({ name:"Vấn đề mới...", weight:1, matrix:{}, cloLock:{} });
       renderMatrix();
       renderConfig();
       renderSidebar();
@@ -1007,7 +1123,7 @@
         const tr = document.createElement('tr');
         tr.className = "border-b border-slate-100 hover:bg-slate-50";
         tr.innerHTML = `
-          <td class="px-4 py-3 font-bold text-blue-600">${clo.id}</td>
+          <td class="px-4 py-3 font-bold text-blue-600">${escapeHtml(clo.id)}</td>
           <td class="px-4 py-3">
             <input type="text" value="${escapeHtml(clo.name || '')}"
                    onchange="updateCLOData(${idx}, 'name', this.value)"
@@ -1032,31 +1148,26 @@
       autoSaveDebounced();
     }
 
-    // --- CLO MANAGER (add/edit/delete/lock/target) ---
+    // --- CLO MANAGER (add/edit/delete/target) ---
     function renderCLOManager(){
       const body = document.getElementById('cloManagerBody');
       if(!body) return;
 
       configTarget.clo = configTarget.clo || {};
-      configTarget.cloLock = configTarget.cloLock || {};
-
-      // ensure keys
       clos.forEach(c=>{
         if(configTarget.clo[c.id] === undefined) configTarget.clo[c.id] = 0;
-        if(configTarget.cloLock[c.id] === undefined) configTarget.cloLock[c.id] = false;
       });
 
       body.innerHTML = '';
 
       clos.forEach((clo, idx)=>{
-        const locked = !!configTarget.cloLock[clo.id];
         const target = parseInt(configTarget.clo[clo.id] || 0);
 
         const tr = document.createElement('tr');
         tr.className = "border-b border-slate-100 hover:bg-slate-50";
 
         tr.innerHTML = `
-          <td class="px-3 py-3 font-extrabold text-slate-700">${clo.id}</td>
+          <td class="px-3 py-3 font-extrabold text-slate-700">${escapeHtml(clo.id)}</td>
           <td class="px-3 py-3">
             <input class="w-full border border-slate-200 rounded px-2 py-1"
                    value="${escapeHtml(clo.name || '')}"
@@ -1071,14 +1182,6 @@
             <input type="number" class="config-input w-20 font-bold text-slate-700"
                    value="${target}"
                    onchange="updateCLOTarget('${clo.id}', this.value)">
-          </td>
-          <td class="px-3 py-3 text-center">
-            <button class="border px-3 py-1 rounded text-xs font-bold ${locked ? 'lock-on' : 'lock-off'}"
-                    onclick="toggleCLOLock('${clo.id}')"
-                    title="${locked ? 'Đang khóa (AutoGen bỏ qua)' : 'Đang mở'}">
-              <i class="fa-solid ${locked ? 'fa-lock' : 'fa-lock-open'} mr-1"></i>
-              ${locked ? 'Khóa' : 'Mở'}
-            </button>
           </td>
           <td class="px-3 py-3 text-center">
             <button class="border border-red-200 text-red-600 hover:bg-red-50 px-3 py-1 rounded text-xs font-bold"
@@ -1109,9 +1212,15 @@
       clos.push({ id:newId, name:name, desc:"" });
 
       configTarget.clo = configTarget.clo || {};
-      configTarget.cloLock = configTarget.cloLock || {};
       configTarget.clo[newId] = 0;
-      configTarget.cloLock[newId] = false;
+
+      // add lock key for all problems
+      appData.forEach(sys=>{
+        sys.problems.forEach(prob=>{
+          ensureProblemLock(prob);
+          if(prob.cloLock[newId] === undefined) prob.cloLock[newId] = false;
+        });
+      });
 
       renderMatrix();
       renderConfig();
@@ -1126,16 +1235,6 @@
       autoSaveDebounced();
     }
 
-    function toggleCLOLock(cloId){
-      configTarget.cloLock = configTarget.cloLock || {};
-      configTarget.cloLock[cloId] = !configTarget.cloLock[cloId];
-
-      renderMatrix();
-      renderConfig();
-      renderCLOManager();
-      autoSaveDebounced();
-    }
-
     function deleteCLO(cloId){
       if(!confirm(`Xóa CLO "${cloId}"?\n- Sẽ xóa cột này trong ma trận (mọi vấn đề)\n- Không thể hoàn tác nếu chưa lưu cloud.`)) return;
 
@@ -1146,12 +1245,12 @@
 
       // remove from targets
       if(configTarget?.clo) delete configTarget.clo[cloId];
-      if(configTarget?.cloLock) delete configTarget.cloLock[cloId];
 
-      // remove from all matrices
+      // remove from all matrices + locks
       appData.forEach(sys=>{
         sys.problems.forEach(prob=>{
           if(prob.matrix && prob.matrix[cloId]) delete prob.matrix[cloId];
+          if(prob.cloLock && prob.cloLock[cloId] !== undefined) delete prob.cloLock[cloId];
         });
       });
 
@@ -1190,10 +1289,8 @@
       // ensure targets exist
       configTarget.bloom = configTarget.bloom || {1:20,2:30,3:30,4:10,5:5,6:5};
       configTarget.clo = configTarget.clo || {};
-      configTarget.cloLock = configTarget.cloLock || {};
       clos.forEach(c=>{
         if(configTarget.clo[c.id] === undefined) configTarget.clo[c.id] = 0;
-        if(configTarget.cloLock[c.id] === undefined) configTarget.cloLock[c.id] = false;
       });
 
       const currentSys = appData[currentSystemIdx];
@@ -1283,7 +1380,7 @@
         if(bloomTotalSum) bloomTotalSum.innerText = bloomTargetTotal + '%';
       }
 
-      // CLO targets + lock
+      // CLO targets (no group lock here)
       const cloList = document.getElementById('cloConfigList');
       if(cloList){
         cloList.innerHTML = '';
@@ -1292,18 +1389,12 @@
         clos.forEach(clo=>{
           const target = configTarget.clo[clo.id] || 0;
           const actual = stats.cloPercents[clo.id] || 0;
-          const locked = !!configTarget.cloLock[clo.id];
           cloTargetTotal += parseInt(target);
 
           cloList.innerHTML += `
             <div class="flex items-center gap-3">
               <div class="w-16 text-sm font-medium text-slate-600 flex items-center gap-2">
-                <span>${clo.id}</span>
-                <button class="text-[10px] px-2 py-0.5 rounded border ${locked ? 'lock-on' : 'lock-off'}"
-                        onclick="toggleCLOLock('${clo.id}')"
-                        title="Khóa/Mở CLO để auto-gen tránh">
-                  <i class="fa-solid ${locked ? 'fa-lock' : 'fa-lock-open'}"></i>
-                </button>
+                <span>${escapeHtml(clo.id)}</span>
               </div>
 
               <div class="flex-1">
@@ -1318,8 +1409,7 @@
 
               <input type="number" value="${target}"
                      onchange="updateConfig('clo', '${clo.id}', this.value)"
-                     class="config-input text-slate-700 font-bold ${locked ? 'opacity-60' : ''}"
-                     title="${locked ? 'CLO đang khóa (auto-gen bỏ qua), bạn vẫn có thể chỉnh target.' : ''}">
+                     class="config-input text-slate-700 font-bold">
             </div>
           `;
         });
@@ -1334,7 +1424,6 @@
       else configTarget.clo[id] = parseInt(value) || 0;
 
       renderConfig();
-      renderCLOManager();
       autoSaveDebounced();
     }
 
@@ -1356,17 +1445,9 @@
     function runAutoGenerator(){
       const totalQ = parseInt(document.getElementById('autoTotalQ').value) || 100;
 
-      // Eligible CLOs = not locked
-      configTarget.cloLock = configTarget.cloLock || {};
-      const eligibleCLOs = clos.filter(c=>!configTarget.cloLock[c.id]);
-
-      if(eligibleCLOs.length === 0){
-        return alert("❌ Bạn đã KHÓA tất cả CLO. Hãy mở ít nhất 1 CLO để auto-gen rải câu.");
-      }
-
       if(!confirm("Hệ thống sẽ xóa dữ liệu hiện tại và tạo mới dựa trên cấu hình tỉ trọng. Tiếp tục?")) return;
 
-      // clear existing
+      // clear existing (keep cloLock)
       appData.forEach(sys=>sys.problems.forEach(p=>p.matrix = {}));
 
       // build bloom deck
@@ -1378,23 +1459,22 @@
       while(bloomDeck.length < totalQ) bloomDeck.push(Math.floor(Math.random()*6)+1);
       bloomDeck = shuffle(bloomDeck);
 
-      // build clo deck using targets but ONLY eligible CLOs
+      // build clo deck using targets (toàn bài)
       let cloDeck = [];
-      const eligibleTotalTarget = eligibleCLOs.reduce((acc,c)=>acc + (parseInt(configTarget.clo[c.id]||0)), 0);
+      const totalTarget = clos.reduce((acc,c)=>acc + (parseInt(configTarget.clo[c.id]||0)), 0);
 
-      // If all eligible targets are 0 -> fallback uniform
-      if(eligibleTotalTarget <= 0){
+      if(totalTarget <= 0){
         for(let i=0;i<totalQ;i++){
-          cloDeck.push(eligibleCLOs[Math.floor(Math.random()*eligibleCLOs.length)].id);
+          cloDeck.push(clos[Math.floor(Math.random()*clos.length)].id);
         }
       }else{
-        eligibleCLOs.forEach(clo=>{
+        clos.forEach(clo=>{
           const t = parseInt(configTarget.clo[clo.id] || 0);
-          const count = Math.round(totalQ * (t / eligibleTotalTarget));
+          const count = Math.round(totalQ * (t / totalTarget));
           for(let i=0;i<count;i++) cloDeck.push(clo.id);
         });
         while(cloDeck.length < totalQ){
-          cloDeck.push(eligibleCLOs[Math.floor(Math.random()*eligibleCLOs.length)].id);
+          cloDeck.push(clos[Math.floor(Math.random()*clos.length)].id);
         }
       }
       cloDeck = shuffle(cloDeck);
@@ -1411,24 +1491,44 @@
 
         sys.problems.forEach(prob=>{
           if(!prob.weight) return;
+          ensureProblemLock(prob);
 
           let probTargetQ = (parseFloat(prob.weight) / totalProbWeight) * sysTargetQ;
 
           let count = Math.floor(probTargetQ);
           if(Math.random() < (probTargetQ - count)) count++;
 
+          // eligible CLO for this problem = not locked
+          const probEligible = clos.map(c=>c.id).filter(id => !prob.cloLock?.[id]);
+          if(probEligible.length === 0){
+            // vấn đề này khóa hết -> bỏ qua
+            return;
+          }
+
           for(let k=0;k<count;k++){
             if(currentQCount >= totalQ) break;
 
-            if(cloDeck.length === 0){
-              cloDeck.push(eligibleCLOs[Math.floor(Math.random()*eligibleCLOs.length)].id);
-            }
-            if(bloomDeck.length === 0){
-              bloomDeck.push(Math.floor(Math.random()*6)+1);
+            // pick cloId respecting locks
+            let cloId = null;
+            let tries = 0;
+
+            while(tries < 20){
+              const candidate = cloDeck.length
+                ? cloDeck.pop()
+                : probEligible[Math.floor(Math.random()*probEligible.length)];
+
+              if(!prob.cloLock?.[candidate]){
+                cloId = candidate;
+                break;
+              }
+              tries++;
             }
 
-            const cloId = cloDeck.pop();
-            const bloomLvl = bloomDeck.pop();
+            if(!cloId){
+              cloId = probEligible[Math.floor(Math.random()*probEligible.length)];
+            }
+
+            const bloomLvl = bloomDeck.length ? bloomDeck.pop() : (Math.floor(Math.random()*6)+1);
 
             if(!prob.matrix[cloId]) prob.matrix[cloId] = { q: 0, bloom: bloomLvl };
             prob.matrix[cloId].q += 1;
@@ -1445,7 +1545,7 @@
       renderCLOManager();
       autoSaveDebounced();
 
-      alert(`✅ Đã tạo xong ma trận với ${currentQCount} câu hỏi.\n(CLO khóa đã được bỏ qua trong auto-gen)`);
+      alert(`✅ Đã tạo xong ma trận với ${currentQCount} câu hỏi.\n(Ô bị khóa theo vấn đề đã được auto-gen bỏ qua)`);
     }
 
     function shuffle(array){
@@ -1510,11 +1610,10 @@
       activeCell = { sysIdx: currentSystemIdx, probIdx: pIdx, cloId: cloId };
 
       const cellData = appData[currentSystemIdx].problems[pIdx].matrix[cloId] || { q:'', bloom:1 };
-
       document.getElementById('editorQ').value = cellData.q;
       selectBloom(cellData.bloom || 1);
 
-      // NEW: show lock button status in editor
+      // show lock button status
       refreshCellEditorLockUI();
 
       const editor = document.getElementById('cellEditor');
@@ -1571,35 +1670,38 @@
       if(!btn || !icon || !text) return;
       if(!activeCell || !activeCell.cloId) return;
 
-      configTarget.cloLock = configTarget.cloLock || {};
-      const cloId = activeCell.cloId;
-      if(configTarget.cloLock[cloId] === undefined) configTarget.cloLock[cloId] = false;
+      const prob = appData?.[activeCell.sysIdx]?.problems?.[activeCell.probIdx];
+      if(!prob) return;
 
-      const locked = !!configTarget.cloLock[cloId];
+      ensureProblemLock(prob);
+      const cloId = activeCell.cloId;
+      const locked = !!prob.cloLock[cloId];
 
       btn.classList.remove("hidden");
       btn.classList.toggle("lock-on", locked);
       btn.classList.toggle("lock-off", !locked);
 
       icon.className = `fa-solid ${locked ? "fa-lock" : "fa-lock-open"} mr-1`;
-      text.innerText = locked ? `Khóa ${cloId}` : `Mở ${cloId}`;
+      text.innerText = locked ? `Khóa ${cloId} (row)` : `Mở ${cloId} (row)`;
       btn.title = locked
-        ? `CLO ${cloId} đang bị KHÓA → auto-gen sẽ bỏ qua`
-        : `CLO ${cloId} đang MỞ → auto-gen có thể rải vào`;
+        ? `Ô (Vấn đề này, ${cloId}) đang KHÓA → AutoGen sẽ KHÔNG rải vào ô này`
+        : `Ô (Vấn đề này, ${cloId}) đang MỞ → AutoGen có thể rải vào ô này`;
     }
 
     function toggleLockFromCellEditor(){
       if(!activeCell || !activeCell.cloId) return;
+      const prob = appData?.[activeCell.sysIdx]?.problems?.[activeCell.probIdx];
+      if(!prob) return;
 
-      configTarget.cloLock = configTarget.cloLock || {};
-      const cloId = activeCell.cloId;
-      configTarget.cloLock[cloId] = !configTarget.cloLock[cloId];
+      const locked = toggleCellLock(prob, activeCell.cloId);
 
       refreshCellEditorLockUI();
       renderMatrix();
       renderConfig();
-      renderCLOManager();
+      renderSidebar();
       autoSaveDebounced();
+
+      showToast(locked ? `🔒 Đã khóa ${activeCell.cloId} (row)` : `🔓 Đã mở ${activeCell.cloId} (row)`);
     }
 
     // =========================
@@ -1624,17 +1726,21 @@
         let sysSum = 0;
 
         sys.problems.forEach((prob, pIdx)=>{
+          ensureProblemLock(prob);
+
           const row = [`${sIdx+1}.${pIdx+1}`, prob.name];
           let rowSum = 0;
 
           clos.forEach((clo, cIdx)=>{
+            const locked = !!prob.cloLock?.[clo.id];
             const cell = prob.matrix[clo.id];
+
             if(cell && cell.q > 0){
-              row.push(cell.q);
+              row.push(locked ? `${cell.q} (LOCK)` : cell.q);
               rowSum += parseInt(cell.q);
               colTotals[cIdx] += parseInt(cell.q);
             }else{
-              row.push("");
+              row.push(locked ? "LOCK" : "");
             }
           });
 
@@ -1659,18 +1765,20 @@
       info_data.push(["",""]);
       info_data.push(["MỤC TIÊU CLO (Target)","%"]);
       clos.forEach(c=>{
-        const locked = configTarget?.cloLock?.[c.id] ? " (LOCK)" : "";
-        info_data.push([c.id + locked, configTarget.clo[c.id]]);
+        info_data.push([c.id, configTarget.clo[c.id]]);
       });
+      info_data.push(["",""]);
+      info_data.push(["GHI CHÚ",""]);
+      info_data.push(["LOCK theo VẤN ĐỀ", "Chuột phải lên ô để toggle lock nhanh"]);
 
       const wb = XLSX.utils.book_new();
 
       const ws1 = XLSX.utils.aoa_to_sheet(ws_data);
-      ws1['!cols'] = [{wch:6},{wch:50}, ...clos.map(()=>({wch:10})), {wch:8}];
+      ws1['!cols'] = [{wch:6},{wch:50}, ...clos.map(()=>({wch:12})), {wch:8}];
       XLSX.utils.book_append_sheet(wb, ws1, "Ma trận");
 
       const ws2 = XLSX.utils.aoa_to_sheet(info_data);
-      ws2['!cols'] = [{wch:30},{wch:14}];
+      ws2['!cols'] = [{wch:30},{wch:20}];
       XLSX.utils.book_append_sheet(wb, ws2, "Cấu hình");
 
       XLSX.writeFile(wb, "Matrix_Blueprint_Export.xlsx");
@@ -1697,15 +1805,13 @@
       }
     });
 
-    // tiny helper to avoid breaking HTML
-    function escapeHtml(str){
-      return String(str ?? "")
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-    }
+    // Prevent browser context menu on matrix cells area (optional)
+    // -> vẫn dùng được chuột phải cho lock, không hiện menu trình duyệt khi click ô.
+    document.addEventListener('contextmenu', (e)=>{
+      if(e.target && e.target.classList && e.target.classList.contains('matrix-cell')){
+        e.preventDefault();
+      }
+    });
 
     init();
   </script>
