@@ -15,7 +15,6 @@
       --primary: #2563EB;
       --bg-body: #F8FAFC;
       --border-color: #E2E8F0;
-
       /* Bloom Colors */
       --bloom-1: #FEE2E2; /* Remembering - Red */
       --bloom-2: #FFEDD5; /* Understanding - Orange */
@@ -287,27 +286,6 @@
       font-size: 12px;
       background: #fff;
     }
-
-    /* --- Problem Quick Editor (Sidebar) --- */
-    #problemEditor {
-      position: fixed;
-      background: white;
-      border: 1px solid #CBD5E1;
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-      border-radius: 10px;
-      padding: 12px;
-      z-index: 120;
-      display: none;
-      width: 320px;
-    }
-    .problem-chip {
-      font-size: 11px;
-      padding: 2px 8px;
-      border-radius: 999px;
-      background: #F1F5F9;
-      color: #475569;
-      border: 1px solid #E2E8F0;
-    }
   </style>
 </head>
 
@@ -319,7 +297,8 @@
       <div class="flex items-center text-blue-700">
         <i class="fa-solid fa-layer-group text-xl mr-2"></i>
         <div>
-          <h1 class="font-bold text-base leading-tight text-slate-800">Matrix<span class="text-blue-600">Builder</span>
+          <h1 class="font-bold text-base leading-tight text-slate-800">
+            Matrix<span class="text-blue-600">Builder</span>
             <span class="text-xs font-normal text-slate-500">PRO - 2026</span>
           </h1>
         </div>
@@ -388,8 +367,13 @@
         <button onclick="addSystem()" class="w-full py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 rounded text-xs font-bold transition-colors">
           <i class="fa-solid fa-folder-plus mr-1"></i> Thêm Hệ Thống
         </button>
+
         <button onclick="addCLO()" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded text-xs font-bold transition-colors">
           <i class="fa-solid fa-plus mr-1"></i> Thêm CLO (Cột)
+        </button>
+
+        <button onclick="openCLOManager()" class="w-full py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded text-xs font-bold transition-colors">
+          <i class="fa-solid fa-gears mr-1"></i> Quản lý CLO (Sửa/Xóa)
         </button>
       </div>
     </aside>
@@ -443,14 +427,15 @@
               </span>
               Định nghĩa Chuẩn đầu ra (CLOs)
             </h3>
+
             <div class="overflow-x-auto">
               <table class="w-full text-sm text-left">
                 <thead class="text-xs text-slate-500 uppercase bg-slate-50 border-b">
-                <tr>
-                  <th class="px-4 py-3 w-24">Mã CLO</th>
-                  <th class="px-4 py-3 w-48">Tên ngắn</th>
-                  <th class="px-4 py-3">Mô tả chi tiết / Định nghĩa</th>
-                </tr>
+                  <tr>
+                    <th class="px-4 py-3 w-24">Mã CLO</th>
+                    <th class="px-4 py-3 w-48">Tên ngắn</th>
+                    <th class="px-4 py-3">Mô tả chi tiết / Định nghĩa</th>
+                  </tr>
                 </thead>
                 <tbody id="cloInfoBody"></tbody>
               </table>
@@ -466,7 +451,10 @@
             <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 rounded-lg p-5 mb-6 flex items-center justify-between shadow-sm">
               <div>
                 <h3 class="font-bold text-blue-800 text-lg mb-1"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i>Tạo Ma Trận Tự Động (AI Distribution)</h3>
-                <p class="text-sm text-blue-600 opacity-80">Hệ thống sẽ rải câu hỏi dựa trên <b>Tỉ trọng %</b> của các Hệ thống & Vấn đề đã cấu hình.</p>
+                <p class="text-sm text-blue-600 opacity-80">
+                  Hệ thống sẽ rải câu hỏi dựa trên <b>Tỉ trọng %</b> của các Hệ thống & Vấn đề đã cấu hình.
+                  Bạn có thể <b>khóa CLO</b> để auto-gen tránh rải vào CLO đó.
+                </p>
               </div>
               <div class="flex items-end gap-4">
                 <div>
@@ -532,6 +520,7 @@
                     </span>
                     Mục tiêu Bloom (Toàn bài)
                   </h3>
+
                   <div class="grid grid-cols-2 gap-4" id="bloomConfigList"></div>
                   <div class="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center">
                     <span class="font-bold text-slate-600 text-xs uppercase">Tổng Bloom Target:</span>
@@ -546,7 +535,9 @@
                     </span>
                     Mục tiêu CLO (Toàn bài)
                   </h3>
+
                   <div class="space-y-4" id="cloConfigList"></div>
+
                   <div class="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center">
                     <span class="font-bold text-slate-600 text-xs uppercase">Tổng CLO Target:</span>
                     <span class="font-bold text-base" id="cloTotalSum">0%</span>
@@ -561,6 +552,7 @@
 
       </div>
     </main>
+
   </div>
 
   <!-- CELL EDITOR POPUP -->
@@ -593,40 +585,50 @@
     </div>
   </div>
 
-  <!-- PROBLEM EDITOR POPUP (SIDEBAR) -->
-  <div id="problemEditor">
-    <div class="flex justify-between items-center mb-2">
-      <span class="text-xs font-bold text-slate-500 uppercase">Chỉnh sửa vấn đề</span>
-      <button onclick="closeProblemEditor()" class="text-slate-400 hover:text-red-500">
-        <i class="fa-solid fa-times"></i>
-      </button>
-    </div>
+  <!-- CLO MANAGER MODAL -->
+  <div id="cloManagerModal" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-[120]">
+    <div class="bg-white w-[920px] max-w-[95vw] rounded-xl border border-slate-200 shadow-xl overflow-hidden">
+      <div class="px-4 py-3 border-b flex items-center justify-between bg-slate-50">
+        <div class="font-bold text-slate-800">
+          <i class="fa-solid fa-list-check mr-2 text-indigo-600"></i>Quản lý CLO (Thêm / Sửa / Xóa / Khóa)
+        </div>
+        <button onclick="closeCLOManager()" class="text-slate-500 hover:text-red-500">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
 
-    <div class="mb-2 flex items-center gap-2">
-      <span class="problem-chip" id="peSystemName">Hệ thống</span>
-      <span class="problem-chip" id="peProblemIndex">#</span>
-    </div>
+      <div class="p-4">
+        <div class="text-xs text-slate-500 mb-3">
+          * “Khóa” nghĩa là <b>auto-gen sẽ không rải</b> câu vào CLO đó. Bạn vẫn có thể nhập tay trong ma trận.
+        </div>
 
-    <div class="mb-3">
-      <label class="text-xs block text-slate-600 mb-1">Tên vấn đề:</label>
-      <input id="peName" type="text"
-             class="w-full border border-slate-300 rounded px-2 py-1 text-sm font-semibold focus:border-blue-500 outline-none">
-    </div>
+        <div class="overflow-auto max-h-[60vh] border rounded-lg">
+          <table class="w-full text-sm">
+            <thead class="sticky top-0 bg-white border-b">
+              <tr class="text-xs uppercase text-slate-500">
+                <th class="p-2 text-left w-28">Mã CLO</th>
+                <th class="p-2 text-left w-56">Tên ngắn</th>
+                <th class="p-2 text-left">Mô tả</th>
+                <th class="p-2 text-center w-28">Target %</th>
+                <th class="p-2 text-center w-32">Khóa auto-gen</th>
+                <th class="p-2 text-center w-24">Xóa</th>
+              </tr>
+            </thead>
+            <tbody id="cloManagerBody"></tbody>
+          </table>
+        </div>
 
-    <div class="mb-3">
-      <label class="text-xs block text-slate-600 mb-1">Trọng số (weight):</label>
-      <input id="peWeight" type="number" min="0"
-             class="w-full border border-slate-300 rounded px-2 py-1 text-sm font-bold text-center focus:border-blue-500 outline-none">
-      <div class="text-[11px] text-slate-400 mt-1">* Trọng số dùng cho Auto Generator (phân bổ trong hệ).</div>
-    </div>
-
-    <div class="flex gap-2">
-      <button onclick="saveProblemEditor()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs py-2 rounded font-bold">
-        Lưu
-      </button>
-      <button onclick="deleteProblemFromEditor()" class="flex-1 bg-slate-100 hover:bg-red-100 text-slate-600 hover:text-red-600 text-xs py-2 rounded font-bold">
-        Xóa vấn đề
-      </button>
+        <div class="mt-4 flex items-center justify-between gap-3">
+          <button onclick="addCLO()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-bold text-sm">
+            <i class="fa-solid fa-plus mr-2"></i>Thêm CLO
+          </button>
+          <div class="flex items-center gap-2">
+            <button onclick="closeCLOManager()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded font-bold text-sm">
+              Đóng
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -660,13 +662,18 @@
       if (state.configTarget) configTarget = state.configTarget;
       if (Number.isInteger(state.currentSystemIdx)) currentSystemIdx = state.currentSystemIdx;
 
-      // đảm bảo configTarget.clo đủ key cho clos
+      // ensure configTarget.clo exists
       if (!configTarget || !configTarget.clo) {
         configTarget = configTarget || {};
         configTarget.clo = {};
       }
+      // ensure cloLock exists
+      if (!configTarget.cloLock) configTarget.cloLock = {};
+
+      // ensure keys for all clos
       clos.forEach(c => {
         if (configTarget.clo[c.id] === undefined) configTarget.clo[c.id] = 0;
+        if (configTarget.cloLock[c.id] === undefined) configTarget.cloLock[c.id] = false;
       });
 
       // clamp idx
@@ -678,6 +685,7 @@
       renderCLOInfo();
       renderConfig();
       updateGlobalStats();
+      renderCLOManager();
     }
 
     async function saveToCloud(projectId = CLOUD_PROJECT_ID) {
@@ -733,7 +741,7 @@
       }
     }
 
-    // autosave (tùy chọn): cứ có thay đổi thì tự lưu sau 1.2s
+    // autosave (tùy chọn)
     let _autosaveTimer = null;
     function autoSaveDebounced() {
       const ENABLE_AUTOSAVE = false;
@@ -753,59 +761,59 @@
     const initialData = [
       { name: "Bệnh Tạng phủ", weight: 9.09, problems: [ { name: "Biện chứng tạng phủ" } ] },
       { name: "Bệnh hệ thống Tim mạch – hô hấp", weight: 13.64, problems: [
-          { name: "YHHĐ: Bệnh mạch vành mạn. YHCT: Tâm thống." },
-          { name: "YHHĐ: Tăng huyết áp. YHCT: Huyễn vựng." },
-          { name: "YHHĐ: Suy tĩnh mạch mạn tính." },
-          { name: "YHHĐ: COPD." },
-          { name: "YHHĐ: Hen phế quản. YHCT: Háo chứng, suyễn chứng." }
-        ]},
+        { name: "YHHĐ: Bệnh mạch vành mạn. YHCT: Tâm thống." },
+        { name: "YHHĐ: Tăng huyết áp. YHCT: Huyễn vựng." },
+        { name: "YHHĐ: Suy tĩnh mạch mạn tính." },
+        { name: "YHHĐ: COPD." },
+        { name: "YHHĐ: Hen phế quản. YHCT: Háo chứng, suyễn chứng." }
+      ]},
       { name: "Bệnh hệ thống Tiết niệu – Nội tiết - Huyết học", weight: 11.36, problems: [
-          { name: "YHHĐ: Nhiễm khuẩn tiết niệu. YHCT: Lâm chứng." },
-          { name: "YHHĐ: Béo phì. YHCT: Phì bạng." },
-          { name: "YHHĐ: Đái tháo đường. YHCT: Tiêu khát." },
-          { name: "YHHĐ: Thiếu máu mạn." }
-        ]},
+        { name: "YHHĐ: Nhiễm khuẩn tiết niệu. YHCT: Lâm chứng." },
+        { name: "YHHĐ: Béo phì. YHCT: Phì bạng." },
+        { name: "YHHĐ: Đái tháo đường. YHCT: Tiêu khát." },
+        { name: "YHHĐ: Thiếu máu mạn." }
+      ]},
       { name: "Bệnh hệ thống Tiêu hóa - gan mật", weight: 11.36, problems: [
-          { name: "YHHĐ: Viêm loét dạ dày tá tràng. YHCT: Vị quản thống, Phúc mãn, Bĩ mãn, Chứng trướng." },
-          { name: "YHHĐ: GERD. YHCT: Hung thống, Ái khí." },
-          { name: "YHHĐ: Hội chứng ruột kích thích. YHCT: Tiết tả, Phúc mãn, Tiện bí." },
-          { name: "YHHĐ: Viêm gan mạn. YHCT: Hoàng đản, chứng trướng." },
-          { name: "YHHĐ: Xơ gan. YHCT: Hoàng đản, Cổ trướng." }
-        ]},
+        { name: "YHHĐ: Viêm loét dạ dày tá tràng. YHCT: Vị quản thống, Phúc mãn, Bĩ mãn, Chứng trướng." },
+        { name: "YHHĐ: GERD. YHCT: Hung thống, Ái khí." },
+        { name: "YHHĐ: Hội chứng ruột kích thích. YHCT: Tiết tả, Phúc mãn, Tiện bí." },
+        { name: "YHHĐ: Viêm gan mạn. YHCT: Hoàng đản, chứng trướng." },
+        { name: "YHHĐ: Xơ gan. YHCT: Hoàng đản, Cổ trướng." }
+      ]},
       { name: "Bệnh hệ thống Ngũ quan – Lão khoa", weight: 4.55, problems: [
-          { name: "YHHĐ: Bệnh thận mạn. YHCT: Hư lao." },
-          { name: "YHHĐ: Viêm mũi dị ứng." }
-        ]},
+        { name: "YHHĐ: Bệnh thận mạn. YHCT: Hư lao." },
+        { name: "YHHĐ: Viêm mũi dị ứng." }
+      ]},
       { name: "Bệnh hệ thống Cơ - xương – khớp", weight: 13.64, problems: [
-          { name: "YHHĐ: Thoái hóa cột sống thắt lưng. YHCT: Tý chứng, Yêu thống." },
-          { name: "YHHĐ: Thoái hóa khớp gối. YHCT: Tý chứng, Hạc tất phong." },
-          { name: "YHHĐ: Loãng xương." },
-          { name: "YHHĐ: Viêm khớp dạng thấp. YHCT: Tý chứng." },
-          { name: "YHHĐ: Viêm khớp gout. YHCT: Tý chứng, Thống phong." }
-        ]},
+        { name: "YHHĐ: Thoái hóa cột sống thắt lưng. YHCT: Tý chứng, Yêu thống." },
+        { name: "YHHĐ: Thoái hóa khớp gối. YHCT: Tý chứng, Hạc tất phong." },
+        { name: "YHHĐ: Loãng xương." },
+        { name: "YHHĐ: Viêm khớp dạng thấp. YHCT: Tý chứng." },
+        { name: "YHHĐ: Viêm khớp gout. YHCT: Tý chứng, Thống phong." }
+      ]},
       { name: "Bệnh hệ thống Thần kinh", weight: 13.64, problems: [
-          { name: "YHHĐ: Di chứng tai biến mạch máu não. YHCT: Bán thân bất toại." },
-          { name: "YHHĐ: Đau đầu. YHCT: Đầu thống, Đàm chứng." },
-          { name: "YHHĐ: Đau thần kinh tọa. YHCT: Yêu thống, Yêu cước thống, Tọa cốt phong, Ma mộc bất nhân." },
-          { name: "YHHĐ: Liệt mặt. YHCT: Khẩu nhãn oa tà." },
-          { name: "YHHĐ: Mất ngủ. YHCT: Thất miên." }
-        ]},
+        { name: "YHHĐ: Di chứng tai biến mạch máu não. YHCT: Bán thân bất toại." },
+        { name: "YHHĐ: Đau đầu. YHCT: Đầu thống, Đàm chứng." },
+        { name: "YHHĐ: Đau thần kinh tọa. YHCT: Yêu thống, Yêu cước thống, Tọa cốt phong, Ma mộc bất nhân." },
+        { name: "YHHĐ: Liệt mặt. YHCT: Khẩu nhãn oa tà." },
+        { name: "YHHĐ: Mất ngủ. YHCT: Thất miên." }
+      ]},
       { name: "Bệnh hệ thống Nhiễm – Phụ", weight: 9.09, problems: [
-          { name: "YHHĐ: Viêm gan siêu vi. YHCT: Hoàng đản." },
-          { name: "YHHĐ: Sốt xuất huyết Dengue. YHCT: Ôn bệnh." },
-          { name: "YHHĐ: Đau bụng kinh nguyên phát. YHCT: Thống kinh." },
-          { name: "YHHĐ: Rối loạn mãn kinh và chu mãn kinh." }
-        ]},
+        { name: "YHHĐ: Viêm gan siêu vi. YHCT: Hoàng đản." },
+        { name: "YHHĐ: Sốt xuất huyết Dengue. YHCT: Ôn bệnh." },
+        { name: "YHHĐ: Đau bụng kinh nguyên phát. YHCT: Thống kinh." },
+        { name: "YHHĐ: Rối loạn mãn kinh và chu mãn kinh." }
+      ]},
       { name: "Bệnh hệ thống Nhi khoa", weight: 4.55, problems: [
-          { name: "YHHĐ: Suy dinh dưỡng ở trẻ em. YHCT: Cam tích." },
-          { name: "YHHĐ: Đái dầm ở trẻ em. YHCT: Dạ niệu." }
-        ]},
+        { name: "YHHĐ: Suy dinh dưỡng ở trẻ em. YHCT: Cam tích." },
+        { name: "YHHĐ: Đái dầm ở trẻ em. YHCT: Dạ niệu." }
+      ]},
       { name: "Bệnh hệ thống Ngoại khoa - Da liễu", weight: 9.09, problems: [
-          { name: "YHHĐ: Trĩ. YHCT: Hạ trĩ." },
-          { name: "YHHĐ: Sỏi đường niệu. YHCT: Lâm chứng." },
-          { name: "YHHĐ: Mày đay." },
-          { name: "YHHĐ: Mụn trứng cá." }
-        ]}
+        { name: "YHHĐ: Trĩ. YHCT: Hạ trĩ." },
+        { name: "YHHĐ: Sỏi đường niệu. YHCT: Lâm chứng." },
+        { name: "YHHĐ: Mày đay." },
+        { name: "YHHĐ: Mụn trứng cá." }
+      ]}
     ];
 
     let clos = [
@@ -818,9 +826,13 @@
     // Configuration Targets (Weights in %)
     let configTarget = {
       bloom: { 1: 20, 2: 30, 3: 30, 4: 10, 5: 5, 6: 5 },
-      clo: {}
+      clo: {},
+      cloLock: {} // NEW: khóa CLO để auto-gen không chọn
     };
-    clos.forEach(c => configTarget.clo[c.id] = 25);
+    clos.forEach(c => {
+      configTarget.clo[c.id] = 25;
+      configTarget.cloLock[c.id] = false;
+    });
 
     // Data Structure
     let appData = [];
@@ -828,9 +840,6 @@
     let activeCell = { sysIdx: null, probIdx: null, cloId: null };
     let currentBloomSelection = 1;
     let currentTab = 'matrix';
-
-    // --- Problem editor state ---
-    let activeProblem = { sysIdx: null, probIdx: null };
 
     // --- INIT ---
     function init() {
@@ -853,6 +862,7 @@
       renderCLOInfo();
       renderConfig();
       updateGlobalStats();
+      renderCLOManager();
     }
 
     // --- TAB NAVIGATION ---
@@ -877,68 +887,26 @@
       }
     }
 
-    // --- RENDER SIDEBAR (UPDATED: show problems + add/edit) ---
+    // --- RENDER SIDEBAR ---
     function renderSidebar() {
       const list = document.getElementById('sidebarList');
       list.innerHTML = '';
+      appData.forEach((sys, idx) => {
+        let qCount = 0;
+        sys.problems.forEach(p => Object.values(p.matrix).forEach(cell => qCount += (parseInt(cell.q)||0)));
 
-      appData.forEach((sys, sIdx) => {
-        // tính tổng câu trong hệ
-        let sysQCount = 0;
-        sys.problems.forEach(p => Object.values(p.matrix).forEach(cell => sysQCount += (parseInt(cell.q)||0)));
-
-        // SYSTEM ITEM
-        const sysDiv = document.createElement('div');
-        sysDiv.className = `sidebar-item px-3 py-2 text-sm flex justify-between items-center group ${sIdx === currentSystemIdx ? 'active' : 'text-slate-600'}`;
-
-        sysDiv.innerHTML = `
-          <span class="truncate flex-1" onclick="selectSystem(${sIdx})">${sys.name}</span>
+        const div = document.createElement('div');
+        div.className = `sidebar-item px-3 py-2 text-sm flex justify-between items-center group ${idx === currentSystemIdx ? 'active' : 'text-slate-600'}`;
+        div.innerHTML = `
+          <span class="truncate flex-1" onclick="selectSystem(${idx})">${sys.name}</span>
           <div class="flex items-center gap-2">
-            <span class="text-[10px] bg-slate-200 text-slate-600 px-1.5 rounded-full font-bold" onclick="selectSystem(${sIdx})">${sysQCount}</span>
-
-            <button onclick="addProblemToSystem(${sIdx})" title="Thêm vấn đề" class="sidebar-actions text-blue-400 hover:text-blue-600 hover:bg-blue-50 p-1 rounded transition-colors">
-              <i class="fa-solid fa-plus text-xs"></i>
-            </button>
-
-            <button onclick="deleteSystem(${sIdx})" title="Xóa hệ thống" class="sidebar-actions text-red-400 hover:text-red-600 hover:bg-red-50 p-1 rounded transition-colors">
+            <span class="text-[10px] bg-slate-200 text-slate-600 px-1.5 rounded-full font-bold" onclick="selectSystem(${idx})">${qCount}</span>
+            <button onclick="deleteSystem(${idx})" title="Xóa hệ thống" class="sidebar-actions text-red-400 hover:text-red-600 hover:bg-red-50 p-1 rounded transition-colors">
               <i class="fa-solid fa-trash-can text-xs"></i>
             </button>
           </div>
         `;
-        list.appendChild(sysDiv);
-
-        // PROBLEM LIST (nested)
-        const sub = document.createElement('div');
-        sub.className = "ml-3 pl-2 border-l border-slate-100 space-y-1 mb-2";
-
-        sys.problems.forEach((prob, pIdx) => {
-          let pCount = 0;
-          Object.values(prob.matrix).forEach(cell => pCount += (parseInt(cell.q)||0));
-
-          const probDiv = document.createElement('div');
-          const isActiveSys = (sIdx === currentSystemIdx);
-
-          probDiv.className = `flex items-center justify-between px-2 py-1 rounded text-xs ${
-            isActiveSys ? 'text-slate-700 hover:bg-slate-50' : 'text-slate-500 hover:bg-slate-50'
-          }`;
-
-          probDiv.innerHTML = `
-            <div class="truncate flex-1 pr-2" title="${prob.name}">
-              <i class="fa-regular fa-circle-dot mr-1 text-slate-300"></i>
-              ${prob.name}
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="text-[10px] bg-slate-100 text-slate-500 px-1.5 rounded-full font-bold" title="Số câu trong vấn đề">${pCount}</span>
-
-              <button onclick="openProblemEditor(event, ${sIdx}, ${pIdx})" title="Chỉnh sửa vấn đề" class="text-slate-400 hover:text-blue-600 hover:bg-blue-50 p-1 rounded transition-colors">
-                <i class="fa-solid fa-pen-to-square text-[11px]"></i>
-              </button>
-            </div>
-          `;
-          sub.appendChild(probDiv);
-        });
-
-        list.appendChild(sub);
+        list.appendChild(div);
       });
     }
 
@@ -978,13 +946,13 @@
       sys.problems.forEach((prob, pIdx) => {
         const tr = document.createElement('tr');
         let rowHtml = `<td class="row-header group">
-            <div class="flex justify-between items-start">
-              <div class="text-problem flex-1 mr-2" contenteditable="true" onblur="updateProblemName(${pIdx}, this.innerText)">${prob.name}</div>
-              <button onclick="deleteProblem(${pIdx})" title="Xóa vấn đề" class="row-action-btn text-red-300 hover:text-red-500 pt-0.5">
-                <i class="fa-solid fa-circle-xmark"></i>
-              </button>
-            </div>
-          </td>`;
+          <div class="flex justify-between items-start">
+            <div class="text-problem flex-1 mr-2" contenteditable="true" onblur="updateProblemName(${pIdx}, this.innerText)">${prob.name}</div>
+            <button onclick="deleteProblem(${pIdx})" title="Xóa vấn đề" class="row-action-btn text-red-300 hover:text-red-500 pt-0.5">
+              <i class="fa-solid fa-circle-xmark"></i>
+            </button>
+          </div>
+        </td>`;
         let rowTotal = 0;
 
         clos.forEach(clo => {
@@ -1021,8 +989,10 @@
 
       const addRow = document.createElement('tr');
       addRow.innerHTML = `<td colspan="${clos.length + 2}" class="p-2 text-center">
-          <button onclick="addProblem()" class="text-blue-600 hover:text-blue-800 text-xs font-bold uppercase"><i class="fa-solid fa-plus"></i> Thêm vấn đề</button>
-        </td>`;
+        <button onclick="addProblem()" class="text-blue-600 hover:text-blue-800 text-xs font-bold uppercase">
+          <i class="fa-solid fa-plus"></i> Thêm vấn đề
+        </button>
+      </td>`;
       tbody.appendChild(addRow);
     }
 
@@ -1062,7 +1032,7 @@
 
     function updateProblemName(pIdx, val) {
       if(appData[currentSystemIdx] && appData[currentSystemIdx].problems[pIdx]) {
-        appData[currentSystemIdx].problems[pIdx].name = (val || '').trim();
+        appData[currentSystemIdx].problems[pIdx].name = val;
         renderConfig();
         renderSidebar();
         autoSaveDebounced();
@@ -1100,14 +1070,8 @@
         tr.className = "border-b border-slate-100 hover:bg-slate-50";
         tr.innerHTML = `
           <td class="px-4 py-3 font-bold text-blue-600">${clo.id}</td>
-          <td class="px-4 py-3">
-            <input type="text" value="${clo.name}"
-              onchange="updateCLOData(${idx}, 'name', this.value)"
-              class="w-full bg-transparent border-b border-dashed border-slate-300 outline-none">
-          </td>
-          <td class="px-4 py-3">
-            <textarea onchange="updateCLOData(${idx}, 'desc', this.value)" class="clo-desc-input" rows="2">${clo.desc || ''}</textarea>
-          </td>
+          <td class="px-4 py-3"><input type="text" value="${escapeHtml(clo.name)}" onchange="updateCLOData(${idx}, 'name', this.value)" class="w-full bg-transparent border-b border-dashed border-slate-300 outline-none"></td>
+          <td class="px-4 py-3"><textarea onchange="updateCLOData(${idx}, 'desc', this.value)" class="clo-desc-input" rows="2">${escapeHtml(clo.desc || '')}</textarea></td>
         `;
         tbody.appendChild(tr);
       });
@@ -1117,6 +1081,7 @@
       clos[idx][field] = val;
       if(field === 'name') renderMatrix();
       renderConfig();
+      renderCLOManager();
       autoSaveDebounced();
     }
 
@@ -1163,7 +1128,7 @@
         probList.innerHTML += `
           <div class="flex flex-col mb-3 pb-3 border-b border-slate-50">
             <div class="flex items-center justify-between gap-2">
-              <div class="flex-1 font-medium text-slate-700 text-sm" title="${prob.name}">${prob.name}</div>
+              <div class="flex-1 font-medium text-slate-700 text-sm" title="${escapeHtml(prob.name)}">${escapeHtml(prob.name)}</div>
               <div class="flex items-center gap-1">
                 <span class="text-[10px] text-slate-400 mr-1">Trọng số:</span>
                 <input type="number" value="${w}" onchange="updateProblemWeight(${pIdx}, this.value)" class="config-input w-14 text-right font-bold text-slate-700" placeholder="1">
@@ -1181,6 +1146,7 @@
         `;
       });
 
+      // bloom targets
       const bloomList = document.getElementById('bloomConfigList');
       bloomList.innerHTML = '';
       let bloomTargetTotal = 0;
@@ -1207,36 +1173,64 @@
       });
       document.getElementById('bloomTotalSum').innerText = bloomTargetTotal + '%';
 
+      // clo targets + lock
       const cloList = document.getElementById('cloConfigList');
       cloList.innerHTML = '';
       let cloTargetTotal = 0;
-      clos.forEach(clo => {
+
+      clos.forEach((clo) => {
         const target = configTarget.clo[clo.id] || 0;
         const actual = stats.cloPercents[clo.id] || 0;
+        const locked = !!configTarget.cloLock?.[clo.id];
         cloTargetTotal += parseInt(target);
 
         cloList.innerHTML += `
           <div class="flex items-center gap-3">
-            <div class="w-16 text-sm font-medium text-slate-600">${clo.id}</div>
+            <div class="w-16 text-sm font-medium ${locked ? 'text-slate-400 line-through' : 'text-slate-600'}">${clo.id}</div>
+
             <div class="flex-1">
               <div class="flex justify-between items-center mb-1">
                 <div class="monitor-bar-bg flex-1 mr-2">
                   <div class="monitor-bar-fill ${Math.abs(actual - target) > 5 ? 'bg-orange-500':'bg-emerald-500'}" style="width: ${Math.min(actual, 100)}%"></div>
                 </div>
-                <span class="text-[10px] font-bold text-slate-500 w-8 text-right">${actual}%</span>
+                <span class="text-[10px] font-bold text-slate-500 w-10 text-right">${actual}%</span>
               </div>
+              ${locked ? `<div class="text-[10px] text-red-500 font-bold">CLO đang bị khóa → auto-gen sẽ bỏ qua</div>` : ``}
             </div>
-            <input type="number" value="${target}" onchange="updateConfig('clo', '${clo.id}', this.value)" class="config-input text-slate-700 font-bold">
+
+            <div class="flex items-center gap-2">
+              <input type="number" value="${target}" onchange="updateConfig('clo', '${clo.id}', this.value)"
+                ${locked ? 'disabled' : ''}
+                class="config-input text-slate-700 font-bold w-16 ${locked ? 'opacity-50' : ''}">
+
+              <button onclick="toggleCLOLock('${clo.id}')"
+                title="${locked ? 'Mở khóa CLO' : 'Khóa CLO (auto-gen sẽ không chọn)'}"
+                class="${locked ? 'bg-red-100 text-red-700 border-red-200' : 'bg-slate-100 text-slate-700 border-slate-200'}
+                  border px-2 py-1 rounded text-xs font-bold hover:opacity-80">
+                <i class="fa-solid ${locked ? 'fa-lock' : 'fa-lock-open'} mr-1"></i>
+                ${locked ? 'Khóa' : 'Mở'}
+              </button>
+            </div>
           </div>
         `;
       });
+
       document.getElementById('cloTotalSum').innerText = cloTargetTotal + '%';
+      renderCLOManager();
     }
 
     function updateConfig(type, id, value) {
       if (type === 'bloom') configTarget.bloom[id] = parseInt(value) || 0;
       else configTarget.clo[id] = parseInt(value) || 0;
       renderConfig();
+      autoSaveDebounced();
+    }
+
+    function toggleCLOLock(cloId) {
+      if (!configTarget.cloLock) configTarget.cloLock = {};
+      configTarget.cloLock[cloId] = !configTarget.cloLock[cloId];
+      renderConfig();
+      renderCLOManager();
       autoSaveDebounced();
     }
 
@@ -1259,6 +1253,7 @@
 
       appData.forEach(sys => sys.problems.forEach(p => p.matrix = {}));
 
+      // Bloom deck
       let bloomDeck = [];
       Object.keys(configTarget.bloom).forEach(lvl => {
         const count = Math.round(totalQ * (configTarget.bloom[lvl] / 100));
@@ -1267,12 +1262,21 @@
       while(bloomDeck.length < totalQ) bloomDeck.push(Math.floor(Math.random() * 6) + 1);
       bloomDeck = shuffle(bloomDeck);
 
+      // CLO deck respects cloLock
       let cloDeck = [];
-      clos.forEach(clo => {
-        const count = Math.round(totalQ * (configTarget.clo[clo.id] / 100));
+      const unlockedCLOs = clos.filter(c => !(configTarget.cloLock && configTarget.cloLock[c.id]));
+
+      if (unlockedCLOs.length === 0) {
+        alert("❌ Không thể rải câu: tất cả CLO đang bị khóa. Hãy mở ít nhất 1 CLO.");
+        return;
+      }
+
+      unlockedCLOs.forEach(clo => {
+        const count = Math.round(totalQ * ((configTarget.clo[clo.id] || 0) / 100));
         for(let i=0; i<count; i++) cloDeck.push(clo.id);
       });
-      while(cloDeck.length < totalQ) cloDeck.push(clos[Math.floor(Math.random()*clos.length)].id);
+
+      while(cloDeck.length < totalQ) cloDeck.push(unlockedCLOs[Math.floor(Math.random()*unlockedCLOs.length)].id);
       cloDeck = shuffle(cloDeck);
 
       const totalSysWeight = appData.reduce((acc, sys) => acc + (parseFloat(sys.weight)||0), 0);
@@ -1294,7 +1298,7 @@
           for(let k=0; k<count; k++) {
             if (currentQCount >= totalQ) break;
 
-            if (cloDeck.length === 0) cloDeck.push(clos[Math.floor(Math.random()*clos.length)].id);
+            if (cloDeck.length === 0) cloDeck.push(unlockedCLOs[Math.floor(Math.random()*unlockedCLOs.length)].id);
             if (bloomDeck.length === 0) bloomDeck.push(Math.floor(Math.random() * 6) + 1);
 
             const cloId = cloDeck.pop();
@@ -1302,6 +1306,7 @@
 
             if (!prob.matrix[cloId]) prob.matrix[cloId] = { q: 0, bloom: bloomLvl };
             prob.matrix[cloId].q += 1;
+
             currentQCount++;
           }
         });
@@ -1465,6 +1470,9 @@
       info_data.push(["", ""]);
       info_data.push(["MỤC TIÊU CLO (Target)", "%"]);
       clos.forEach(c => info_data.push([c.id, configTarget.clo[c.id]]));
+      info_data.push(["", ""]);
+      info_data.push(["CLO bị khóa (auto-gen bỏ qua)", ""]);
+      clos.forEach(c => info_data.push([c.id, configTarget.cloLock?.[c.id] ? "LOCKED" : ""]));
 
       const wb = XLSX.utils.book_new();
 
@@ -1473,7 +1481,7 @@
       XLSX.utils.book_append_sheet(wb, ws1, "Ma trận");
 
       const ws2 = XLSX.utils.aoa_to_sheet(info_data);
-      ws2['!cols'] = [{wch: 30}, {wch: 10}];
+      ws2['!cols'] = [{wch: 34}, {wch: 18}];
       XLSX.utils.book_append_sheet(wb, ws2, "Cấu hình");
 
       XLSX.writeFile(wb, "Matrix_Blueprint_Export.xlsx");
@@ -1489,125 +1497,142 @@
       document.body.removeChild(link);
     }
 
+    // --- CLO CRUD (Add/Edit/Delete) ---
     function addCLO() {
-      const id = prompt("Nhập mã CLO mới:");
-      if(id) {
-        const newId = id.toUpperCase();
-        clos.push({ id: newId, name: id, desc: "" });
-        configTarget.clo[newId] = 0;
-        renderMatrix();
-        renderConfig();
-        renderCLOInfo();
-        autoSaveDebounced();
+      const id = prompt("Nhập mã CLO mới (vd: LO5):");
+      if(!id) return;
+      const newId = id.trim().toUpperCase();
+      if(!newId) return;
+
+      if(clos.some(x => x.id.toUpperCase() === newId)) {
+        alert("❌ CLO này đã tồn tại.");
+        return;
       }
+
+      const name = prompt("Nhập tên ngắn cho CLO:", newId) || newId;
+
+      clos.push({ id: newId, name: name, desc: "" });
+
+      // ensure target and lock key
+      if (!configTarget.clo) configTarget.clo = {};
+      if (!configTarget.cloLock) configTarget.cloLock = {};
+      configTarget.clo[newId] = 0;
+      configTarget.cloLock[newId] = false;
+
+      renderMatrix();
+      renderConfig();
+      renderCLOInfo();
+      renderCLOManager();
+      autoSaveDebounced();
     }
 
+    function deleteCLO(idx) {
+      const clo = clos[idx];
+      if(!clo) return;
+
+      if(!confirm(`Xóa CLO ${clo.id}? (Sẽ xóa dữ liệu trong tất cả ô của cột này)`)) return;
+
+      const cloId = clo.id;
+
+      // Remove from clos
+      clos.splice(idx, 1);
+
+      // Remove from target + lock
+      if (configTarget?.clo) delete configTarget.clo[cloId];
+      if (configTarget?.cloLock) delete configTarget.cloLock[cloId];
+
+      // Remove from all matrices
+      appData.forEach(sys => sys.problems.forEach(p => {
+        if (p.matrix && p.matrix[cloId]) delete p.matrix[cloId];
+      }));
+
+      renderMatrix();
+      renderConfig();
+      renderCLOInfo();
+      renderCLOManager();
+      renderSidebar();
+      updateGlobalStats();
+      autoSaveDebounced();
+    }
+
+    // --- CLO MANAGER MODAL ---
+    function openCLOManager() {
+      document.getElementById('cloManagerModal').classList.remove('hidden');
+      document.getElementById('cloManagerModal').classList.add('flex');
+      renderCLOManager();
+    }
+
+    function closeCLOManager() {
+      document.getElementById('cloManagerModal').classList.add('hidden');
+      document.getElementById('cloManagerModal').classList.remove('flex');
+    }
+
+    function renderCLOManager() {
+      const body = document.getElementById('cloManagerBody');
+      if(!body) return;
+      body.innerHTML = '';
+
+      clos.forEach((c, idx) => {
+        const locked = !!configTarget.cloLock?.[c.id];
+        const target = configTarget.clo?.[c.id] ?? 0;
+
+        const tr = document.createElement('tr');
+        tr.className = "border-b hover:bg-slate-50";
+        tr.innerHTML = `
+          <td class="p-2 font-bold ${locked ? 'text-slate-400 line-through' : 'text-blue-700'}">${escapeHtml(c.id)}</td>
+          <td class="p-2">
+            <input class="w-full border rounded px-2 py-1 text-sm"
+              value="${escapeHtml(c.name || '')}"
+              onchange="updateCLOData(${idx}, 'name', this.value)" />
+          </td>
+          <td class="p-2">
+            <textarea class="w-full border rounded px-2 py-1 text-sm" rows="2"
+              onchange="updateCLOData(${idx}, 'desc', this.value)">${escapeHtml(c.desc || '')}</textarea>
+          </td>
+          <td class="p-2 text-center">
+            <input type="number" class="w-20 text-center border rounded px-2 py-1 font-bold ${locked ? 'opacity-50' : ''}"
+              ${locked ? 'disabled' : ''}
+              value="${target}"
+              onchange="updateConfig('clo','${escapeHtml(c.id)}', this.value)" />
+          </td>
+          <td class="p-2 text-center">
+            <button onclick="toggleCLOLock('${escapeHtml(c.id)}')"
+              class="${locked ? 'bg-red-100 text-red-700 border-red-200' : 'bg-slate-100 text-slate-700 border-slate-200'}
+                border px-3 py-1 rounded text-xs font-bold hover:opacity-80">
+              <i class="fa-solid ${locked ? 'fa-lock' : 'fa-lock-open'} mr-1"></i>
+              ${locked ? 'LOCK' : 'UNLOCK'}
+            </button>
+          </td>
+          <td class="p-2 text-center">
+            <button onclick="deleteCLO(${idx})" class="text-red-500 hover:bg-red-50 p-2 rounded" title="Xóa CLO">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </td>
+        `;
+        body.appendChild(tr);
+      });
+    }
+
+    // --- GLOBAL STATS ---
     function updateGlobalStats() {
       document.getElementById('totalQuestionsDisplay').innerText = calculateActualStats().total;
     }
 
-    // =========================
-    // ==== SIDEBAR PROBLEM ====
-    // =========================
-    function addProblemToSystem(sysIdx) {
-      const sys = appData[sysIdx];
-      const name = prompt(`Thêm vấn đề cho hệ "${sys.name}":`, "Vấn đề mới...");
-      if (!name) return;
-
-      sys.problems.push({ name: name, weight: 1, matrix: {} });
-
-      currentSystemIdx = sysIdx;
-
-      renderSidebar();
-      if (currentTab === 'matrix') renderMatrix();
-      renderConfig();
-      updateGlobalStats();
-      autoSaveDebounced();
-    }
-
-    function openProblemEditor(e, sysIdx, probIdx) {
-      e.stopPropagation();
-      activeProblem = { sysIdx, probIdx };
-
-      const sys = appData[sysIdx];
-      const prob = sys.problems[probIdx];
-
-      document.getElementById('peSystemName').innerText = sys.name;
-      document.getElementById('peProblemIndex').innerText = `#${sysIdx + 1}.${probIdx + 1}`;
-
-      document.getElementById('peName').value = prob.name || '';
-      document.getElementById('peWeight').value = (prob.weight ?? 1);
-
-      const editor = document.getElementById('problemEditor');
-      editor.style.display = 'block';
-
-      const rect = e.target.getBoundingClientRect();
-      editor.style.top = (rect.bottom + 8) + 'px';
-      editor.style.left = Math.min(rect.left - 250, window.innerWidth - 340) + 'px';
-      if (parseFloat(editor.style.left) < 10) editor.style.left = "10px";
-
-      document.getElementById('peName').focus();
-    }
-
-    function closeProblemEditor() {
-      document.getElementById('problemEditor').style.display = 'none';
-    }
-
-    function saveProblemEditor() {
-      const { sysIdx, probIdx } = activeProblem;
-      if (sysIdx === null || probIdx === null) return;
-
-      const sys = appData[sysIdx];
-      const prob = sys.problems[probIdx];
-
-      const newName = (document.getElementById('peName').value || '').trim();
-      const newWeight = parseInt(document.getElementById('peWeight').value);
-
-      if (newName) prob.name = newName;
-      prob.weight = Number.isFinite(newWeight) ? newWeight : (prob.weight ?? 1);
-
-      closeProblemEditor();
-
-      renderSidebar();
-      if (sysIdx === currentSystemIdx && currentTab === 'matrix') renderMatrix();
-      renderConfig();
-      updateGlobalStats();
-      autoSaveDebounced();
-    }
-
-    function deleteProblemFromEditor() {
-      const { sysIdx, probIdx } = activeProblem;
-      if (sysIdx === null || probIdx === null) return;
-
-      const sys = appData[sysIdx];
-      const probName = sys.problems[probIdx]?.name || "Vấn đề";
-
-      if (!confirm(`Xóa vấn đề: "${probName}"?`)) return;
-
-      sys.problems.splice(probIdx, 1);
-      closeProblemEditor();
-
-      renderSidebar();
-      if (sysIdx === currentSystemIdx && currentTab === 'matrix') renderMatrix();
-      renderConfig();
-      updateGlobalStats();
-      autoSaveDebounced();
-    }
-
-    // --- Click outside: close editors ---
     document.addEventListener('click', (e) => {
-      // cell editor close
-      const cellEd = document.getElementById('cellEditor');
-      if (cellEd.style.display === 'block' && !cellEd.contains(e.target) && !e.target.classList.contains('matrix-cell')) {
-        closeEditor();
-      }
-
-      // problem editor close
-      const pe = document.getElementById('problemEditor');
-      if (pe && pe.style.display === 'block' && !pe.contains(e.target)) {
-        closeProblemEditor();
-      }
+      const editor = document.getElementById('cellEditor');
+      if (editor.style.display === 'block' && !editor.contains(e.target) && !e.target.classList.contains('matrix-cell')) closeEditor();
     });
+
+    // --- HELPERS ---
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
 
     init();
   </script>
