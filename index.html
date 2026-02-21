@@ -164,7 +164,7 @@
     .lock-on  { background:#FEE2E2; color:#B91C1C; border-color:#FECACA; }
     .lock-off { background:#F1F5F9; color:#334155; border-color:#E2E8F0; }
 
-    /* NEW: Cell locked overlay icon */
+    /* Cell locked overlay icon */
     .matrix-cell.locked{
       position:relative;
       opacity:0.55;
@@ -181,7 +181,7 @@
       pointer-events:none;
     }
 
-    /* NEW: tiny toast */
+    /* tiny toast */
     #toast{
       position:fixed;
       left:50%;
@@ -200,6 +200,90 @@
       overflow:hidden;
       text-overflow:ellipsis;
     }
+
+    /* NEW: disabled cell (CLO not applied for this problem) */
+    .matrix-cell.disabled {
+      background: #f8fafc;
+      color: #94a3b8;
+      cursor: not-allowed;
+      opacity: 0.75;
+      filter: grayscale(0.35);
+    }
+    .matrix-cell.disabled:hover {
+      box-shadow: none;
+      filter: none;
+    }
+
+    /* NEW: mini button in row header */
+    .row-mini-btn{
+      font-size:11px;
+      font-weight:800;
+      padding:2px 8px;
+      border-radius:999px;
+      border:1px solid #e2e8f0;
+      color:#475569;
+      background:#fff;
+    }
+    .row-mini-btn:hover{
+      background:#f1f5f9;
+      color:#0f172a;
+    }
+
+    /* NEW: modal for per-problem CLO */
+    #problemCloModalBackdrop{
+      position:fixed; inset:0;
+      background:rgba(15,23,42,.35);
+      z-index:300;
+      display:none;
+    }
+    #problemCloModal{
+      position:fixed;
+      left:50%; top:50%;
+      transform:translate(-50%,-50%);
+      width:min(520px,92vw);
+      background:#fff;
+      border:1px solid #e2e8f0;
+      border-radius:12px;
+      box-shadow:0 20px 40px rgba(0,0,0,.18);
+      z-index:310;
+      display:none;
+      overflow:hidden;
+    }
+    #problemCloModal .pm-head{
+      padding:12px 14px;
+      background:#f8fafc;
+      border-bottom:1px solid #e2e8f0;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+    #problemCloModal .pm-body{
+      padding:12px 14px;
+      max-height:55vh;
+      overflow:auto;
+    }
+    #problemCloModal .pm-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:8px 8px;
+      border:1px solid #f1f5f9;
+      border-radius:10px;
+      margin-bottom:8px;
+    }
+    #problemCloModal .pm-row:hover{ background:#f8fafc; }
+    .pm-pill{
+      font-size:11px;
+      font-weight:800;
+      padding:2px 8px;
+      border-radius:999px;
+      border:1px solid #e2e8f0;
+      background:#fff;
+      color:#334155;
+    }
+    .pm-pill.on { background:#dcfce7; border-color:#bbf7d0; color:#166534; }
+    .pm-pill.off{ background:#fee2e2; border-color:#fecaca; color:#991b1b; }
   </style>
 </head>
 
@@ -513,6 +597,41 @@
     </main>
   </div>
 
+  <!-- NEW: Per-problem CLO modal -->
+  <div id="problemCloModalBackdrop" onclick="closeProblemCLOModal()"></div>
+  <div id="problemCloModal">
+    <div class="pm-head">
+      <div class="flex items-center gap-2">
+        <span class="text-xs font-extrabold text-slate-600 uppercase">CLO áp dụng cho vấn đề</span>
+        <span id="pmProblemTitle" class="text-xs font-bold text-slate-800"></span>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button class="row-mini-btn" onclick="pmSelectAll(true)">Bật hết</button>
+        <button class="row-mini-btn" onclick="pmSelectAll(false)">Tắt hết</button>
+        <button class="text-slate-400 hover:text-red-500" onclick="closeProblemCLOModal()">
+          <i class="fa-solid fa-times"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="pm-body">
+      <div class="text-xs text-slate-500 mb-3">
+        * CLO <b>tắt</b> sẽ <b>disable</b> ô ở ma trận và AutoGen <b>không rải</b> vào các ô đó.
+        (Khác với “LOCK”: LOCK vẫn cho phép dùng ô nhưng AutoGen bỏ qua)
+      </div>
+
+      <div id="pmCloList"></div>
+
+      <div class="mt-3 flex justify-end gap-2">
+        <button class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2 rounded text-xs font-bold"
+                onclick="closeProblemCLOModal()">
+          Đóng
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- CELL EDITOR POPUP -->
   <div id="cellEditor">
     <div class="flex justify-between items-center mb-2">
@@ -559,7 +678,7 @@
     </div>
   </div>
 
-  <!-- NEW: Toast -->
+  <!-- Toast -->
   <div id="toast"></div>
 
   <script>
@@ -598,10 +717,11 @@
         if(configTarget.clo[c.id] === undefined) configTarget.clo[c.id] = 0;
       });
 
-      // ensure per-problem locks exist
+      // ensure per-problem locks & disabled exist
       (appData || []).forEach(sys=>{
         (sys.problems || []).forEach(prob=>{
           if(!prob.cloLock) prob.cloLock = {};
+          if(!prob.cloDisabled) prob.cloDisabled = {};
         });
       });
 
@@ -799,6 +919,21 @@
       return !!prob.cloLock[cloId];
     }
 
+    // NEW: per-problem CLO apply/disable
+    function ensureProblemDisabled(prob){
+      if(!prob) return;
+      if(!prob.cloDisabled) prob.cloDisabled = {};
+    }
+    function isCLOApplied(prob, cloId){
+      ensureProblemDisabled(prob);
+      return !prob.cloDisabled[cloId];
+    }
+    function setCLOApplied(prob, cloId, applied){
+      ensureProblemDisabled(prob);
+      prob.cloDisabled[cloId] = !applied; // true = disabled
+      return applied;
+    }
+
     // toast
     let _toastTimer = null;
     function showToast(message){
@@ -812,9 +947,6 @@
 
     // --- INIT ---
     function init(){
-      // thử auto-load 1 lần (nếu có cloud)
-      loadFromCloud().catch(()=>{});
-
       // init local data (fallback)
       appData = initialData.map(cat=>({
         name:cat.name,
@@ -823,16 +955,21 @@
           name:p.name,
           weight:1,
           matrix:{},
-          cloLock:{} // NEW: lock per-problem/per-cell
+          cloLock:{},
+          cloDisabled:{} // NEW
         }))
       }));
 
+      // render first
       renderSidebar();
       renderMatrix();
       renderCLOInfo();
       renderConfig();
       renderCLOManager();
       updateGlobalStats();
+
+      // try auto-load once (cloud). If found, applyState will override.
+      loadFromCloud().catch(()=>{});
     }
 
     // --- TAB NAVIGATION ---
@@ -910,7 +1047,6 @@
     // =========================
     // ====== RIGHT CLICK LOCK ==
     // =========================
-    // NEW: right-click on cell to toggle lock quickly (no editor)
     function onCellRightClick(e, pIdx, cloId){
       e.preventDefault();
       e.stopPropagation();
@@ -919,9 +1055,6 @@
       if(!prob) return;
 
       const locked = toggleCellLock(prob, cloId);
-
-      // if just locked, optional: remove auto-gen future fill but keep current q
-      // -> giữ dữ liệu hiện tại, chỉ "khóa" để AutoGen tránh
 
       renderMatrix();
       renderConfig();
@@ -971,18 +1104,26 @@
 
       sys.problems.forEach((prob, pIdx)=>{
         ensureProblemLock(prob);
+        ensureProblemDisabled(prob);
 
         const tr = document.createElement('tr');
 
         let rowHtml = `
           <td class="row-header group">
-            <div class="flex justify-between items-start">
+            <div class="flex justify-between items-start gap-2">
               <div class="text-problem flex-1 mr-2" contenteditable="true"
                    onblur="updateProblemName(${pIdx}, this.innerText)">${escapeHtml(prob.name)}</div>
-              <button onclick="deleteProblem(${pIdx})" title="Xóa vấn đề"
-                      class="row-action-btn text-red-300 hover:text-red-500 pt-0.5">
-                <i class="fa-solid fa-circle-xmark"></i>
-              </button>
+
+              <div class="flex items-center gap-1">
+                <button class="row-mini-btn" onclick="openProblemCLOModal(${pIdx})" title="Bật/tắt CLO áp dụng cho vấn đề này">
+                  CLO
+                </button>
+
+                <button onclick="deleteProblem(${pIdx})" title="Xóa vấn đề"
+                        class="row-action-btn text-red-300 hover:text-red-500 pt-0.5">
+                  <i class="fa-solid fa-circle-xmark"></i>
+                </button>
+              </div>
             </div>
           </td>
         `;
@@ -990,6 +1131,8 @@
         let rowTotal = 0;
 
         clos.forEach(clo=>{
+          const applied = isCLOApplied(prob, clo.id);
+          const disabled = !applied;
           const locked = !!prob.cloLock?.[clo.id];
 
           const cellData = prob.matrix[clo.id];
@@ -1006,11 +1149,17 @@
 
           rowHtml += `
             <td>
-              <div class="matrix-cell ${bloomClass} ${locked ? 'locked' : ''}"
-                   onclick="openCell(event, ${pIdx}, '${clo.id}')"
+              <div class="matrix-cell ${bloomClass} ${locked ? 'locked' : ''} ${disabled ? 'disabled' : ''}"
+                   ${disabled ? '' : `onclick="openCell(event, ${pIdx}, '${clo.id}')"`}
                    oncontextmenu="onCellRightClick(event, ${pIdx}, '${clo.id}')"
-                   title="${locked ? 'LOCK (AutoGen bỏ qua ô này) - Chuột phải để mở' : 'Chuột phải để khóa ô này (AutoGen sẽ bỏ qua)'}"
-              >${content}</div>
+                   title="${
+                     disabled
+                       ? 'CLO này đang TẮT cho vấn đề này (bấm nút CLO ở dòng để bật)'
+                       : (locked
+                          ? 'LOCK (AutoGen bỏ qua ô này) - Chuột phải để mở'
+                          : 'Chuột phải để khóa ô này (AutoGen sẽ bỏ qua)')
+                   }"
+              >${disabled ? '' : content}</div>
             </td>
           `;
         });
@@ -1053,7 +1202,7 @@
       appData.push({
         name:name,
         weight:10,
-        problems:[{ name:"Vấn đề 1...", weight:1, matrix:{}, cloLock:{} }]
+        problems:[{ name:"Vấn đề 1...", weight:1, matrix:{}, cloLock:{}, cloDisabled:{} }]
       });
 
       currentSystemIdx = appData.length - 1;
@@ -1092,7 +1241,13 @@
 
     function addProblem(){
       if(appData.length === 0) return;
-      appData[currentSystemIdx].problems.push({ name:"Vấn đề mới...", weight:1, matrix:{}, cloLock:{} });
+      appData[currentSystemIdx].problems.push({
+        name:"Vấn đề mới...",
+        weight:1,
+        matrix:{},
+        cloLock:{},
+        cloDisabled:{}
+      });
       renderMatrix();
       renderConfig();
       renderSidebar();
@@ -1214,11 +1369,27 @@
       configTarget.clo = configTarget.clo || {};
       configTarget.clo[newId] = 0;
 
-      // add lock key for all problems
-      appData.forEach(sys=>{
+      // ✅ ONLY auto-ON for problems in CURRENT system (same group)
+      const curSys = appData?.[currentSystemIdx];
+      if(curSys){
+        curSys.problems.forEach(prob=>{
+          ensureProblemLock(prob);
+          ensureProblemDisabled(prob);
+
+          if(prob.cloLock[newId] === undefined) prob.cloLock[newId] = false;
+          if(prob.cloDisabled[newId] === undefined) prob.cloDisabled[newId] = false; // ON
+        });
+      }
+
+      // ✅ other systems: default OFF (recommended to avoid undefined & keep it not applied)
+      appData.forEach((sys, sIdx)=>{
+        if(sIdx === currentSystemIdx) return;
         sys.problems.forEach(prob=>{
           ensureProblemLock(prob);
+          ensureProblemDisabled(prob);
+
           if(prob.cloLock[newId] === undefined) prob.cloLock[newId] = false;
+          if(prob.cloDisabled[newId] === undefined) prob.cloDisabled[newId] = true; // OFF
         });
       });
 
@@ -1246,11 +1417,12 @@
       // remove from targets
       if(configTarget?.clo) delete configTarget.clo[cloId];
 
-      // remove from all matrices + locks
+      // remove from all matrices + locks + disabled
       appData.forEach(sys=>{
         sys.problems.forEach(prob=>{
           if(prob.matrix && prob.matrix[cloId]) delete prob.matrix[cloId];
           if(prob.cloLock && prob.cloLock[cloId] !== undefined) delete prob.cloLock[cloId];
+          if(prob.cloDisabled && prob.cloDisabled[cloId] !== undefined) delete prob.cloDisabled[cloId];
         });
       });
 
@@ -1380,7 +1552,7 @@
         if(bloomTotalSum) bloomTotalSum.innerText = bloomTargetTotal + '%';
       }
 
-      // CLO targets (no group lock here)
+      // CLO targets (toàn bài)
       const cloList = document.getElementById('cloConfigList');
       if(cloList){
         cloList.innerHTML = '';
@@ -1447,7 +1619,7 @@
 
       if(!confirm("Hệ thống sẽ xóa dữ liệu hiện tại và tạo mới dựa trên cấu hình tỉ trọng. Tiếp tục?")) return;
 
-      // clear existing (keep cloLock)
+      // clear existing (keep cloLock + cloDisabled)
       appData.forEach(sys=>sys.problems.forEach(p=>p.matrix = {}));
 
       // build bloom deck
@@ -1492,32 +1664,36 @@
         sys.problems.forEach(prob=>{
           if(!prob.weight) return;
           ensureProblemLock(prob);
+          ensureProblemDisabled(prob);
 
           let probTargetQ = (parseFloat(prob.weight) / totalProbWeight) * sysTargetQ;
 
           let count = Math.floor(probTargetQ);
           if(Math.random() < (probTargetQ - count)) count++;
 
-          // eligible CLO for this problem = not locked
-          const probEligible = clos.map(c=>c.id).filter(id => !prob.cloLock?.[id]);
+          // eligible CLO for this problem = applied AND not locked
+          const probEligible = clos
+            .map(c=>c.id)
+            .filter(id => isCLOApplied(prob, id) && !prob.cloLock?.[id]);
+
           if(probEligible.length === 0){
-            // vấn đề này khóa hết -> bỏ qua
+            // vấn đề này: không còn CLO hợp lệ -> bỏ qua
             return;
           }
 
           for(let k=0;k<count;k++){
             if(currentQCount >= totalQ) break;
 
-            // pick cloId respecting locks
+            // pick cloId respecting applied+lock
             let cloId = null;
             let tries = 0;
 
-            while(tries < 20){
+            while(tries < 30){
               const candidate = cloDeck.length
                 ? cloDeck.pop()
                 : probEligible[Math.floor(Math.random()*probEligible.length)];
 
-              if(!prob.cloLock?.[candidate]){
+              if(isCLOApplied(prob, candidate) && !prob.cloLock?.[candidate]){
                 cloId = candidate;
                 break;
               }
@@ -1545,7 +1721,7 @@
       renderCLOManager();
       autoSaveDebounced();
 
-      alert(`✅ Đã tạo xong ma trận với ${currentQCount} câu hỏi.\n(Ô bị khóa theo vấn đề đã được auto-gen bỏ qua)`);
+      alert(`✅ Đã tạo xong ma trận với ${currentQCount} câu hỏi.\n(Ô bị khóa / CLO tắt theo vấn đề đã được auto-gen bỏ qua)`);
     }
 
     function shuffle(array){
@@ -1606,6 +1782,15 @@
     // =========================
     function openCell(e, pIdx, cloId){
       e.stopPropagation();
+
+      const prob = appData?.[currentSystemIdx]?.problems?.[pIdx];
+      if(!prob) return;
+
+      // If CLO not applied -> block opening editor
+      if(!isCLOApplied(prob, cloId)){
+        showToast(`⚠️ ${cloId} đang TẮT cho vấn đề này (bấm nút CLO ở dòng để bật)`);
+        return;
+      }
 
       activeCell = { sysIdx: currentSystemIdx, probIdx: pIdx, cloId: cloId };
 
@@ -1705,6 +1890,114 @@
     }
 
     // =========================
+    // == PER-PROBLEM CLO MODAL ==
+    // =========================
+    let pmActiveProblemIdx = null;
+
+    function openProblemCLOModal(pIdx){
+      const prob = appData?.[currentSystemIdx]?.problems?.[pIdx];
+      if(!prob) return;
+
+      pmActiveProblemIdx = pIdx;
+      ensureProblemDisabled(prob);
+
+      // ensure every CLO has a key (default ON)
+      clos.forEach(c=>{
+        if(prob.cloDisabled[c.id] === undefined) prob.cloDisabled[c.id] = false;
+      });
+
+      const title = document.getElementById("pmProblemTitle");
+      if(title) title.innerText = `— ${prob.name || ""}`;
+
+      renderProblemCLOList();
+
+      document.getElementById("problemCloModalBackdrop").style.display = "block";
+      document.getElementById("problemCloModal").style.display = "block";
+    }
+
+    function closeProblemCLOModal(){
+      pmActiveProblemIdx = null;
+      document.getElementById("problemCloModalBackdrop").style.display = "none";
+      document.getElementById("problemCloModal").style.display = "none";
+    }
+
+    function renderProblemCLOList(){
+      const wrap = document.getElementById("pmCloList");
+      if(!wrap) return;
+
+      const prob = appData?.[currentSystemIdx]?.problems?.[pmActiveProblemIdx];
+      if(!prob) return;
+
+      ensureProblemDisabled(prob);
+
+      wrap.innerHTML = "";
+
+      clos.forEach(clo=>{
+        const applied = isCLOApplied(prob, clo.id);
+
+        const row = document.createElement("div");
+        row.className = "pm-row";
+        row.innerHTML = `
+          <div class="flex items-center gap-2">
+            <span class="pm-pill ${applied ? 'on' : 'off'}">${applied ? 'ON' : 'OFF'}</span>
+            <div>
+              <div class="text-sm font-extrabold text-slate-700">${escapeHtml(clo.id)} — ${escapeHtml(clo.name||'')}</div>
+              <div class="text-xs text-slate-400">${escapeHtml(clo.desc||'')}</div>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <label class="text-xs font-bold text-slate-600 flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" ${applied ? "checked" : ""} onchange="pmToggleCLO('${clo.id}', this.checked)">
+              Áp dụng
+            </label>
+          </div>
+        `;
+        wrap.appendChild(row);
+      });
+    }
+
+    function pmToggleCLO(cloId, applied){
+      const prob = appData?.[currentSystemIdx]?.problems?.[pmActiveProblemIdx];
+      if(!prob) return;
+
+      setCLOApplied(prob, cloId, applied);
+
+      // optional: when OFF, also force LOCK to keep AutoGen behavior consistent
+      if(!applied){
+        ensureProblemLock(prob);
+        prob.cloLock[cloId] = true;
+      }
+
+      renderProblemCLOList();
+      closeEditor();
+      renderMatrix();
+      renderConfig();
+      renderSidebar();
+      autoSaveDebounced();
+    }
+
+    function pmSelectAll(applied){
+      const prob = appData?.[currentSystemIdx]?.problems?.[pmActiveProblemIdx];
+      if(!prob) return;
+
+      clos.forEach(clo=>{
+        setCLOApplied(prob, clo.id, applied);
+        if(!applied){
+          ensureProblemLock(prob);
+          prob.cloLock[clo.id] = true;
+        }
+      });
+
+      renderProblemCLOList();
+      closeEditor();
+      renderMatrix();
+      renderConfig();
+      renderSidebar();
+      autoSaveDebounced();
+    }
+
+    // =========================
     // ====== EXPORT LOGIC ======
     // =========================
     function exportRealExcel(){
@@ -1727,13 +2020,20 @@
 
         sys.problems.forEach((prob, pIdx)=>{
           ensureProblemLock(prob);
+          ensureProblemDisabled(prob);
 
           const row = [`${sIdx+1}.${pIdx+1}`, prob.name];
           let rowSum = 0;
 
           clos.forEach((clo, cIdx)=>{
+            const applied = isCLOApplied(prob, clo.id);
             const locked = !!prob.cloLock?.[clo.id];
             const cell = prob.matrix[clo.id];
+
+            if(!applied){
+              row.push("OFF");
+              return;
+            }
 
             if(cell && cell.q > 0){
               row.push(locked ? `${cell.q} (LOCK)` : cell.q);
@@ -1770,6 +2070,7 @@
       info_data.push(["",""]);
       info_data.push(["GHI CHÚ",""]);
       info_data.push(["LOCK theo VẤN ĐỀ", "Chuột phải lên ô để toggle lock nhanh"]);
+      info_data.push(["OFF theo VẤN ĐỀ", "Bấm nút CLO ở dòng để bật/tắt CLO áp dụng"]);
 
       const wb = XLSX.utils.book_new();
 
@@ -1778,7 +2079,7 @@
       XLSX.utils.book_append_sheet(wb, ws1, "Ma trận");
 
       const ws2 = XLSX.utils.aoa_to_sheet(info_data);
-      ws2['!cols'] = [{wch:30},{wch:20}];
+      ws2['!cols'] = [{wch:30},{wch:30}];
       XLSX.utils.book_append_sheet(wb, ws2, "Cấu hình");
 
       XLSX.writeFile(wb, "Matrix_Blueprint_Export.xlsx");
@@ -1806,7 +2107,6 @@
     });
 
     // Prevent browser context menu on matrix cells area (optional)
-    // -> vẫn dùng được chuột phải cho lock, không hiện menu trình duyệt khi click ô.
     document.addEventListener('contextmenu', (e)=>{
       if(e.target && e.target.classList && e.target.classList.contains('matrix-cell')){
         e.preventDefault();
