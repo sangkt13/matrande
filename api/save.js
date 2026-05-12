@@ -1,45 +1,48 @@
 import { put } from "@vercel/blob";
+import { requireAdmin } from "./auth.js";
 
 export default async function handler(req, res) {
-  try {
-    if (req.method !== "POST") {
-      return res.status(405).json({ error: "Method not allowed" });
-    }
+  const user = requireAdmin(req, res);
+  if (!user) return;
 
-    const body = req.body || {};
-    const projectId = (body.projectId || "blueprint2026").toString();
-    const data = body.data;
+  if (req.method !== "POST") {
+    return res.status(405).json({
+      error: "Method not allowed"
+    });
+  }
+
+  try {
+    const { projectId = "blueprint2026", data } = req.body || {};
 
     if (!data) {
-      return res.status(400).json({ error: "Missing data" });
+      return res.status(400).json({
+        error: "Thiếu dữ liệu cần lưu"
+      });
     }
 
     const pathname = `matrix/${projectId}.json`;
 
     const blob = await put(
       pathname,
-      JSON.stringify(
-        {
-          savedAt: new Date().toISOString(),
-          data
-        },
-        null,
-        2
-      ),
+      JSON.stringify(data, null, 2),
       {
         access: "public",
-        addRandomSuffix: false,
+        contentType: "application/json",
         allowOverwrite: true
       }
     );
 
     return res.status(200).json({
       ok: true,
-      projectId,
-      pathname,
-      url: blob.url
+      url: blob.url,
+      savedBy: user.username,
+      savedAt: new Date().toISOString()
     });
-  } catch (e) {
-    return res.status(500).json({ error: e?.message || String(e) });
+  } catch (error) {
+    console.error("SAVE ERROR:", error);
+
+    return res.status(500).json({
+      error: error.message || "Save failed"
+    });
   }
 }
