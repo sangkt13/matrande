@@ -1,9 +1,0 @@
-{
-  "name": "matrix-blueprint-2026",
-  "private": true,
-  "type": "module",
-  "dependencies": {
-    "@vercel/blob": "^1.0.0",
-    "jsonwebtoken": "^9.0.2"
-  }
-}
